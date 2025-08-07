@@ -1,0 +1,19 @@
+# Equilibration using NPT
+
+This directory contains the scripts needed to run the computation of the Young's moduli using M3GNet machine learning interatomic potential using equilibration routine at T = 300 K using NPT as described in the paper.
+
+The file structures of `./inputs` and `./outputs` to ensure the smooth generation of the input and output files are as follows:
+```
+./inputs
+├── deformation
+└── unmelted
+```
+```
+./outputs
+├── log_files
+│   ├── deformation
+│   └── unmelted
+└── unmelted_traj
+```
+
+To run the LAMMPS script, enter the `./scripts` directory and run `bash ./scripts/<script name>` to run an instance of LAMMPS. The input file will be generated and structures will be saved after each phase of the MD.

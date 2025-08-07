@@ -1,0 +1,40 @@
+
+# - mass = grams/mol
+# - distance = Angstroms
+# - time = picoseconds
+# - energy = eV
+# - velocity = Angstroms/picosecond
+# - temperature = Kelvin
+# - pressure = bars
+# - density = gram/cm^dim
+
+units           metal
+dimension       3
+boundary        p p p
+atom_style      atomic
+timestep        0.001   # 1 femtosecond
+
+variable thermal_damp index 10.0
+variable pressure_damp index 1000.0
+
+read_restart    ../structures/unmelted/unmelted_333-EXP-6-vasp.restart
+pair_style      m3gnet/gpu ../../potentials/M3GNET 
+pair_coeff      * * M3GNet-MP-2021.2.8-DIRECT-PES Si H C O
+dump            melting all custom 100 ../outputs/melted_traj/melted_333-EXP-6-vasp_1000.lammpstrj element x y z
+dump_modify     melting element Si H C O
+log             ../outputs/log_files/melted/melted_333-EXP-6-vasp_1000.log
+neighbor 2.0 bin
+
+# Thermodynamic output
+thermo          1000
+thermo_style    custom step temp pe ke etotal press vol density
+
+fix nvt_heat    all nvt/gpu temp 300 1000 ${thermal_damp}
+run 100000      # 100 picoseconds 
+unfix           nvt_heat
+
+fix npt_heat    all npt/gpu temp 1000 1000 ${thermal_damp} iso 0 0 ${pressure_damp}
+run 100000      # 100 picoseconds
+unfix           npt_heat
+
+write_restart ../structures/melted/melted_333-EXP-6-vasp_1000.restart

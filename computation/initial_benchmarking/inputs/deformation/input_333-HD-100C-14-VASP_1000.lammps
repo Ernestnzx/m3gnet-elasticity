@@ -1,0 +1,174 @@
+
+# - mass = grams/mol
+# - distance = Angstroms
+# - time = picoseconds
+# - energy = eV
+# - velocity = Angstroms/picosecond
+# - temperature = Kelvin
+# - pressure = bars
+# - density = gram/cm^dim
+
+variable up equal 2.0e-2
+ 
+# metal units, elastic constants in GPa
+units		metal
+variable cfac equal 1.0e-4
+variable cunits string GPa
+
+# Define MD parameters
+variable nevery equal 10                        # sampling interval
+variable nrepeat equal 10                       # number of samples
+variable nfreq equal ${nevery}*${nrepeat}       # length of one average
+variable nthermo equal ${nfreq}                 # interval for thermo output
+variable nequil equal 10*${nthermo}             # length of equilibration run
+variable nrun equal 3*${nthermo}                # length of equilibrated run
+variable temp equal 300.0                       # temperature of initial sample
+variable timestep equal 0.001                   # timestep
+variable adiabatic equal 0                      # adiabatic (1) or isothermal (2)
+variable tdamp equal 0.01                       # time constant for thermostat
+variable seed equal 123457                      # seed for thermostat
+
+read_restart ../structures/annealed/annealed_333-HD-100C-14-VASP_1000.restart
+log ../outputs/log_files/deformation/deformation_333-HD-100C-14-VASP_1000.log
+
+pair_style      m3gnet/gpu ../../potentials/M3GNET 
+pair_coeff      * * M3GNet-MP-2021.2.8-DIRECT-PES Si H C O
+thermo          1000
+thermo_style    custom step temp pe ke etotal press vol density
+fix npt_equil   all npt/gpu temp 300 300 10.0 iso 0 0 100
+run 50000       # 50 picoseconds
+unfix           npt_equil
+
+variable thermostat equal 1
+include ../inputs/deformation/potential_333-HD-100C-14-VASP.mod
+run ${nequil}
+
+if "${adiabatic} == 1" &
+then "variable thermostat equal 0" &
+else "variable thermostat equal 1"
+
+include ../inputs/deformation/potential_333-HD-100C-14-VASP.mod
+run ${nrun}
+
+variable pxx0 equal f_avp[1]
+variable pyy0 equal f_avp[2]
+variable pzz0 equal f_avp[3]
+variable pxy0 equal f_avp[4]
+variable pxz0 equal f_avp[5]
+variable pyz0 equal f_avp[6]
+
+variable tmp equal lx
+variable lx0 equal ${tmp}
+variable tmp equal ly
+variable ly0 equal ${tmp}
+variable tmp equal lz
+variable lz0 equal ${tmp}
+
+# These formulas define the derivatives w.r.t. strain components
+# Constants uses $, variables use v_ 
+variable d1 equal -(v_pxx1-${pxx0})/(v_delta/v_len0)*${cfac}
+variable d2 equal -(v_pyy1-${pyy0})/(v_delta/v_len0)*${cfac}
+variable d3 equal -(v_pzz1-${pzz0})/(v_delta/v_len0)*${cfac}
+variable d4 equal -(v_pyz1-${pyz0})/(v_delta/v_len0)*${cfac}
+variable d5 equal -(v_pxz1-${pxz0})/(v_delta/v_len0)*${cfac}
+variable d6 equal -(v_pxy1-${pxy0})/(v_delta/v_len0)*${cfac}
+
+# Write restart
+write_restart restart_333-HD-100C-14-VASP.equil
+
+# uxx Perturbation
+variable dir equal 1
+include ../inputs/deformation/displace_333-HD-100C-14-VASP.mod
+
+# uyy Perturbation
+variable dir equal 2
+include ../inputs/deformation/displace_333-HD-100C-14-VASP.mod
+
+# uzz Perturbation
+variable dir equal 3
+include ../inputs/deformation/displace_333-HD-100C-14-VASP.mod
+
+# uyz Perturbation
+variable dir equal 4
+include ../inputs/deformation/displace_333-HD-100C-14-VASP.mod
+
+# uxz Perturbation
+variable dir equal 5
+include ../inputs/deformation/displace_333-HD-100C-14-VASP.mod
+
+# uxy Perturbation
+variable dir equal 6
+include ../inputs/deformation/displace_333-HD-100C-14-VASP.mod
+
+# Output final values
+variable C11all equal ${C11}
+variable C22all equal ${C22}
+variable C33all equal ${C33}
+
+variable C12all equal 0.5*(${C12}+${C21})
+variable C13all equal 0.5*(${C13}+${C31})
+variable C23all equal 0.5*(${C23}+${C32})
+
+variable C44all equal ${C44}
+variable C55all equal ${C55}
+variable C66all equal ${C66}
+
+variable C14all equal 0.5*(${C14}+${C41})
+variable C15all equal 0.5*(${C15}+${C51})
+variable C16all equal 0.5*(${C16}+${C61})
+
+variable C24all equal 0.5*(${C24}+${C42})
+variable C25all equal 0.5*(${C25}+${C52})
+variable C26all equal 0.5*(${C26}+${C62})
+
+variable C34all equal 0.5*(${C34}+${C43})
+variable C35all equal 0.5*(${C35}+${C53})
+variable C36all equal 0.5*(${C36}+${C63})
+
+variable C45all equal 0.5*(${C45}+${C54})
+variable C46all equal 0.5*(${C46}+${C64})
+variable C56all equal 0.5*(${C56}+${C65})
+
+# Average moduli for cubic crystals
+
+variable C11cubic equal (${C11all}+${C22all}+${C33all})/3.0
+variable C12cubic equal (${C12all}+${C13all}+${C23all})/3.0
+variable C44cubic equal (${C44all}+${C55all}+${C66all})/3.0
+
+variable bulkmodulus equal (${C11cubic}+2*${C12cubic})/3.0
+variable shearmodulus1 equal ${C44cubic}
+variable shearmodulus2 equal (${C11cubic}-${C12cubic})/2.0
+variable poissonratio equal 1.0/(1.0+${C11cubic}/${C12cubic})
+
+print "Elastic Constant 1 1 = ${C11all}"
+print "Elastic Constant 2 2 = ${C22all}"
+print "Elastic Constant 3 3 = ${C33all}"
+
+print "Elastic Constant 1 2 = ${C12all}"
+print "Elastic Constant 1 3 = ${C13all}"
+print "Elastic Constant 2 3 = ${C23all}"
+
+print "Elastic Constant 4 4 = ${C44all}"
+print "Elastic Constant 5 5 = ${C55all}"
+print "Elastic Constant 6 6 = ${C66all}"
+
+print "Elastic Constant 1 4 = ${C14all}"
+print "Elastic Constant 1 5 = ${C15all}"
+print "Elastic Constant 1 6 = ${C16all}"
+
+print "Elastic Constant 2 4 = ${C24all}"
+print "Elastic Constant 2 5 = ${C25all}"
+print "Elastic Constant 2 6 = ${C26all}"
+
+print "Elastic Constant 3 4 = ${C34all}"
+print "Elastic Constant 3 5 = ${C35all}"
+print "Elastic Constant 3 6 = ${C36all}"
+
+print "Elastic Constant 4 5 = ${C45all}"
+print "Elastic Constant 4 6 = ${C46all}"
+print "Elastic Constant 5 6 = ${C56all}"
+
+print "Bulk Modulus = ${bulkmodulus} ${cunits}"
+print "Shear Modulus 1 = ${shearmodulus1} ${cunits}"
+print "Shear Modulus 2 = ${shearmodulus2} ${cunits}"
+print "Poisson Ratio = ${poissonratio}"
