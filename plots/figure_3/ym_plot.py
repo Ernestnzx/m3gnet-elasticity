@@ -9,8 +9,8 @@ title_size,axis_size = 16,14
 data = [
     ('ml','MD simulation using M3GNet'),
     ('vasp','VASP computation'),
-    ('forcite','COMPASSII Relaxation & Computation'),
-    ('uff', 'UFF Relaxation + COMPASSII FF Computation'),
+    ('forcite','DFT Optimization + COMPASSII FF Computation'),
+    ('uff', 'DFT Optimization + UFF Computation'),
 ]
 labels = {
     "EXP" : "07-26-18-00-30",
@@ -107,7 +107,7 @@ for filename,label in data:
     plt.text(0.825,57,f'RMSE (polynomial): {rmse_poly:.3f}\nRMSE (exponential): {rmse_exp:.3f}',fontsize=10)
 
     plt.legend(prop={'size':11})
-    plt.title(f'Density vs Young Modulus\n({label})',size=title_size)
+    plt.title(f'Density vs Young Modulus',size=title_size)
     plt.xlabel('Density / g cm$^{-3}$',size=axis_size)
     plt.ylabel("Young Modulus / GPa",size=axis_size)
     plt.xlim((0.8,2.4))
