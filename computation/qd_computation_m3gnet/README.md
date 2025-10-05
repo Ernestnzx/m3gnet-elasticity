@@ -1,4 +1,4 @@
-# Q-D Structure Computation
+# Q-D Structure Computation for M3GNet
 
 This directory contains the scripts needed to run the computation of the Young's moduli using M3GNet machine learning interatomic potential using the modified MD simulation routine as described in the paper. This directory is for computing the total of 100 structures of varying Q-D ratio.
 

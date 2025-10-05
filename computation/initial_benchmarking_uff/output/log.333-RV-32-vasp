@@ -1,0 +1,2747 @@
+units           real
+atom_style      full
+boundary        p p p
+
+pair_style      lj/cut 5.000
+bond_style      harmonic
+angle_style     hybrid cosine/periodic fourier
+dihedral_style  harmonic
+
+special_bonds   lj/coul 0.0 0.0 1.0
+pair_modify     tail yes mix arithmetic
+dielectric      1.0
+box tilt        large
+
+The 'box' command has been removed and will be ignored
+
+read_data       ./dat/data.333-RV-32-vasp
+Reading data file ...
+  triclinic box = (0 0 0) to (15.708732 13.086792 17.524803) with tilt (-8.204242 -0.145779 -2.00561)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  331 atoms
+  scanning bonds ...
+  4 = max bonds/atom
+  scanning angles ...
+  6 = max angles/atom
+  scanning dihedrals ...
+  30 = max dihedrals/atom
+  triclinic box = (0 0 0) to (15.708732 13.086792 17.524803) with tilt (-8.204242 -0.145779 -2.00561)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  1 by 1 by 1 MPI processor grid
+  reading bonds ...
+  336 bonds
+  reading angles ...
+  626 angles
+  reading dihedrals ...
+  732 dihedrals
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        1       
+  special bond factors coul:  0        0        1       
+     4 = max # of 1-2 neighbors
+    10 = max # of 1-3 neighbors
+    14 = max # of special neighbors
+  special bonds CPU = 0.000 seconds
+  read_data CPU = 0.006 seconds
+
+#### Atom Groupings ####
+group           1        id   32 51 79 83 93:95 123 225:227 237:239 267:275 331
+24 atoms in group 1
+group           fram     id   1:31 33:50 52:78 80:82 84:92 96:122 124:224 228:236 240:266 276:330
+307 atoms in group fram
+#### END Atom Groupings ####
+
+compute am all property/atom mass
+dump        atom_pos all extxyz 100 ./output/333-RV-32-vasp.lammpstrj
+dump_modify atom_pos element Si C H O Si C H O mass yes
+thermo          1000
+thermo_style    custom step temp pe ke etotal press vol density
+
+variable up equal 2e-2
+variable cfac equal 1.0e-4
+variable cunits string GPa
+
+# Define minimization parameters
+variable etol equal 0.0
+variable ftol equal 1.0e-10
+variable maxiter equal 100000
+variable maxeval equal 100000
+variable dmax equal 1.0e-2
+
+variable temp equal 300.0
+variable thermal_damp index 100.0
+variable pressure_damp index 500.0
+
+fix relax all box/relax aniso 0.0 vmax 0.001
+unfix relax
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+minimize 0 ${ftol} ${maxiter} ${maxeval}
+minimize 0 1e-10 ${maxiter} ${maxeval}
+minimize 0 1e-10 100000 ${maxeval}
+minimize 0 1e-10 100000 100000
+Generated 28 of 28 mixed pair_coeff terms from arithmetic mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 7 5 6
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton/tri
+      stencil: half/bin/3d/tri
+      bin: standard
+WARNING: Inconsistent image flags
+For more information see https://docs.lammps.org/err0027 (src/domain.cpp:1052)
+Per MPI rank memory allocation (min/avg/max) = 19.51 | 19.51 | 19.51 Mbytes
+   Step          Temp          PotEng         KinEng         TotEng         Press          Volume        Density    
+         0   0              569.62796      0              569.62796      54553.79       3602.6948      1.4003667    
+        51   0             -202.08425      0             -202.08425      8550.0185      3602.6948      1.4003667    
+Loop time of 0.026128 on 1 procs for 51 steps with 331 atoms
+
+108.9% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = linesearch alpha is zero
+  Energy initial, next-to-last, final = 
+      569.627957099336  -202.084250668905  -202.084250668905
+  Force two-norm initial, final = 741.03919 25.813478
+  Force max component initial, final = 85.701201 4.1665862
+  Final line search alpha, max atom move = 1.12838e-11 4.7014927e-11
+  Iterations, force evaluations = 51 158
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.018717   | 0.018717   | 0.018717   |   0.0 | 71.64
+Bond    | 0.0043208  | 0.0043208  | 0.0043208  |   0.0 | 16.54
+Neigh   | 0.0016187  | 0.0016187  | 0.0016187  |   0.0 |  6.20
+Comm    | 0.00059798 | 0.00059798 | 0.00059798 |   0.0 |  2.29
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.0008734  |            |       |  3.34
+
+Nlocal:            331 ave         331 max         331 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           2219 ave        2219 max        2219 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          20721 ave       20721 max       20721 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 20721
+Ave neighs/atom = 62.601208
+Ave special neighs/atom = 5.8126888
+Neighbor list builds = 1
+Dangerous builds = 0
+
+# Generating the full routine as described in the paper for UFF
+# fix nvt_relax   all nvt temp 300 300 ${thermal_damp}
+# run 100000      # 100 picoseconds
+# unfix           nvt_relax
+#
+# fix npt_relax   all npt temp 300 300 ${thermal_damp} iso 0 0 ${pressure_damp}
+# run 100000      # 100 picoseconds
+# unfix           npt_relax
+#
+# fix nvt_heat    all nvt temp 300 1000 ${thermal_damp}
+# run 100000      # 100 picoseconds
+# unfix           nvt_heat
+#
+# fix npt_heat    all npt temp 1000 1000 ${thermal_damp} iso 0 0 ${pressure_damp}
+# run 100000      # 100 picoseconds
+# unfix           npt_heat
+#
+# fix cooling_npt all npt temp 1000 300 ${thermal_damp} iso 0 0 ${pressure_damp}
+# run 700000      # 700 picoseconds
+# unfix           cooling_npt
+#
+# fix npt_final   all npt temp 300 300 ${thermal_damp} iso 0 0 100
+# run 100000      # 100 picoseconds
+# unfix           npt_final
+
+# density computation
+# variable rho equal density
+# fix integrate  all npt temp ${temp} ${temp} ${thermal_damp} iso 0 0 ${pressure_damp}
+# fix rho50k all ave/time 10 5000 50000 v_rho mode scalar ave one
+# run 50000
+# unfix integrate
+# unfix rho50k
+
+# Compute initial state
+fix 3 all box/relax  aniso 0.0
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+minimize 0 ${ftol} ${maxiter} ${maxeval}
+minimize 0 1e-10 ${maxiter} ${maxeval}
+minimize 0 1e-10 100000 ${maxeval}
+minimize 0 1e-10 100000 100000
+Generated 28 of 28 mixed pair_coeff terms from arithmetic mixing rule
+WARNING: Energy due to 3 extra global DOFs will be included in minimizer energies
+ (src/min.cpp:222)
+WARNING: Inconsistent image flags
+For more information see https://docs.lammps.org/err0027 (src/domain.cpp:1052)
+Per MPI rank memory allocation (min/avg/max) = 20.57 | 20.57 | 20.57 Mbytes
+   Step          Temp          PotEng         KinEng         TotEng         Press          Volume        Density    
+        51   0             -202.08425      0             -202.08425      8550.0185      3602.6948      1.4003667    
+        64   0             -202.23915      0             -202.23915      8318.3734      3603.479       1.400062     
+Loop time of 0.0298684 on 1 procs for 13 steps with 331 atoms
+
+109.1% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = linesearch alpha is zero
+  Energy initial, next-to-last, final = 
+     -202.084250668905  -202.239146924964  -202.239146924964
+  Force two-norm initial, final = 845.36448 824.28522
+  Force max component initial, final = 688.12568 672.69353
+  Final line search alpha, max atom move = 1.7721189e-14 1.1920929e-11
+  Iterations, force evaluations = 13 173
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.020234   | 0.020234   | 0.020234   |   0.0 | 67.75
+Bond    | 0.0053812  | 0.0053812  | 0.0053812  |   0.0 | 18.02
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.00064579 | 0.00064579 | 0.00064579 |   0.0 |  2.16
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.003607   |            |       | 12.08
+
+Nlocal:            331 ave         331 max         331 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           2209 ave        2209 max        2209 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          20731 ave       20731 max       20731 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 20731
+Ave neighs/atom = 62.63142
+Ave special neighs/atom = 5.8126888
+Neighbor list builds = 0
+Dangerous builds = 0
+
+variable tmp equal pxx
+variable pxx0 equal ${tmp}
+variable pxx0 equal 8086.89460517159
+variable tmp equal pyy
+variable pyy0 equal ${tmp}
+variable pyy0 equal 12801.7000649495
+variable tmp equal pzz
+variable pzz0 equal ${tmp}
+variable pzz0 equal 4066.52541688828
+variable tmp equal pyz
+variable pyz0 equal ${tmp}
+variable pyz0 equal -496.305141158415
+variable tmp equal pxz
+variable pxz0 equal ${tmp}
+variable pxz0 equal -1068.76444755132
+variable tmp equal pxy
+variable pxy0 equal ${tmp}
+variable pxy0 equal -252.568868026563
+
+variable tmp equal lx
+variable lx0 equal ${tmp}
+variable lx0 equal 15.7098403020505
+variable tmp equal ly
+variable ly0 equal ${tmp}
+variable ly0 equal 13.0882469592108
+variable tmp equal lz
+variable lz0 equal ${tmp}
+variable lz0 equal 17.5254324270417
+
+# These formulas define the derivatives w.r.t. strain components
+# Constants uses $, variables use v_
+variable d1 equal -(v_pxx1-${pxx0})/(v_delta/v_len0)*${cfac}
+variable d1 equal -(v_pxx1-8086.89460517159)/(v_delta/v_len0)*${cfac}
+variable d1 equal -(v_pxx1-8086.89460517159)/(v_delta/v_len0)*0.0001
+variable d2 equal -(v_pyy1-${pyy0})/(v_delta/v_len0)*${cfac}
+variable d2 equal -(v_pyy1-12801.7000649495)/(v_delta/v_len0)*${cfac}
+variable d2 equal -(v_pyy1-12801.7000649495)/(v_delta/v_len0)*0.0001
+variable d3 equal -(v_pzz1-${pzz0})/(v_delta/v_len0)*${cfac}
+variable d3 equal -(v_pzz1-4066.52541688828)/(v_delta/v_len0)*${cfac}
+variable d3 equal -(v_pzz1-4066.52541688828)/(v_delta/v_len0)*0.0001
+variable d4 equal -(v_pyz1-${pyz0})/(v_delta/v_len0)*${cfac}
+variable d4 equal -(v_pyz1--496.305141158415)/(v_delta/v_len0)*${cfac}
+variable d4 equal -(v_pyz1--496.305141158415)/(v_delta/v_len0)*0.0001
+variable d5 equal -(v_pxz1-${pxz0})/(v_delta/v_len0)*${cfac}
+variable d5 equal -(v_pxz1--1068.76444755132)/(v_delta/v_len0)*${cfac}
+variable d5 equal -(v_pxz1--1068.76444755132)/(v_delta/v_len0)*0.0001
+variable d6 equal -(v_pxy1-${pxy0})/(v_delta/v_len0)*${cfac}
+variable d6 equal -(v_pxy1--252.568868026563)/(v_delta/v_len0)*${cfac}
+variable d6 equal -(v_pxy1--252.568868026563)/(v_delta/v_len0)*0.0001
+
+# displace_atoms all random ${atomjiggle} ${atomjiggle} ${atomjiggle} 87287 units box
+
+# Write restart
+unfix 3
+write_restart restart_333-RV-32-vasp.equil
+System init for write_restart ...
+Generated 28 of 28 mixed pair_coeff terms from arithmetic mixing rule
+
+# uxx Perturbation
+
+variable dir equal 1
+include ./input/displace_333-RV-32-vasp.mod
+if "${dir} == 1" then    "variable len0 equal ${lx0}"
+variable len0 equal ${lx0}
+variable len0 equal 15.7098403020505
+if "${dir} == 2" then    "variable len0 equal ${ly0}"
+if "${dir} == 3" then    "variable len0 equal ${lz0}"
+if "${dir} == 4" then    "variable len0 equal ${lz0}"
+if "${dir} == 5" then    "variable len0 equal ${lz0}"
+if "${dir} == 6" then    "variable len0 equal ${ly0}"
+
+# Reset box and simulation parameters
+
+clear
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+box tilt large
+
+The 'box' command has been removed and will be ignored
+
+read_restart restart_333-RV-32-vasp.equil
+Reading restart file ...
+  restart file = 10 Sep 2025, LAMMPS = 10 Sep 2025
+  restoring atom style full from restart
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-8.2051541 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  1 by 1 by 1 MPI processor grid
+  restoring pair style lj/cut from restart
+  restoring bond style harmonic from restart
+  restoring angle style hybrid from restart
+  restoring dihedral style harmonic from restart
+  331 atoms
+  336 bonds
+  626 angles
+  732 dihedrals
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        1       
+  special bond factors coul:  0        0        1       
+     4 = max # of 1-2 neighbors
+    10 = max # of 1-3 neighbors
+    14 = max # of special neighbors
+  special bonds CPU = 0.000 seconds
+  read_restart CPU = 0.001 seconds
+include ./input/angles_333-RV-32-vasp.mod
+angle_style hybrid fourier cosine/periodic
+angle_coeff 1 fourier 114.246973        0.343737        0.374972        0.281246
+angle_coeff 2 fourier 157.882480        0.343737        0.374972        0.281246
+angle_coeff 3 fourier 221.735285        0.343737        0.374972        0.281246
+angle_coeff 4 fourier 58.020602        0.343737        0.374972        0.281246
+angle_coeff 5 fourier 32.417871        0.343737        0.374972        0.281246
+angle_coeff 6 fourier 83.380072        0.343737        0.374972        0.281246
+angle_coeff 7 fourier 90.420412        0.343737        0.374972        0.281246
+angle_coeff 8 fourier 75.498766        0.343737        0.374972        0.281246
+angle_coeff 9 cosine/periodic 88.853997              -1               3
+
+# Negative deformation
+
+variable delta equal -${up}*${len0}
+variable delta equal -0.02*${len0}
+variable delta equal -0.02*15.7098403020505
+variable deltaxy equal -${up}*xy
+variable deltaxy equal -0.02*xy
+variable deltaxz equal -${up}*xz
+variable deltaxz equal -0.02*xz
+variable deltayz equal -${up}*yz
+variable deltayz equal -0.02*yz
+if "${dir} == 1" then    "change_box all x delta 0 ${delta} xy delta ${deltaxy} xz delta ${deltaxz} remap units box"
+change_box all x delta 0 ${delta} xy delta ${deltaxy} xz delta ${deltaxz} remap units box
+change_box all x delta 0 -0.31419680604101 xy delta ${deltaxy} xz delta ${deltaxz} remap units box
+change_box all x delta 0 -0.31419680604101 xy delta 0.164103082572306 xz delta ${deltaxz} remap units box
+change_box all x delta 0 -0.31419680604101 xy delta 0.164103082572306 xz delta 0.00291568471700562 remap units box
+Changing box ...
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.395089 13.087519 17.525118) with tilt (-8.2051541 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.395089 13.087519 17.525118) with tilt (-8.041051 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.395089 13.087519 17.525118) with tilt (-8.041051 -0.14286855 -2.005682)
+if "${dir} == 2" then    "change_box all y delta 0 ${delta} yz delta ${deltayz} remap units box"
+if "${dir} == 3" then    "change_box all z delta 0 ${delta} remap units box"
+if "${dir} == 4" then    "change_box all yz delta ${delta} remap units box"
+if "${dir} == 5" then    "change_box all xz delta ${delta} remap units box"
+if "${dir} == 6" then    "change_box all xy delta ${delta} remap units box"
+
+# Relax atoms positions
+
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+minimize 0 ${ftol} ${maxiter} ${maxeval}
+minimize 0 1e-10 ${maxiter} ${maxeval}
+minimize 0 1e-10 100000 ${maxeval}
+minimize 0 1e-10 100000 100000
+Generated 28 of 28 mixed pair_coeff terms from arithmetic mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 7 5 6
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton/tri
+      stencil: half/bin/3d/tri
+      bin: standard
+WARNING: Inconsistent image flags
+For more information see https://docs.lammps.org/err0027 (src/domain.cpp:1052)
+Per MPI rank memory allocation (min/avg/max) = 19.51 | 19.51 | 19.51 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+        64   0             -414.37818      244.09239     -170.2858       30303.778    
+       111   0             -416.54515      213.06809     -203.47706      12882.147    
+Loop time of 0.0293775 on 1 procs for 47 steps with 331 atoms
+
+109.0% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = linesearch alpha is zero
+  Energy initial, next-to-last, final = 
+     -170.285795949355  -203.477056045329  -203.477056045329
+  Force two-norm initial, final = 151.44147 18.814814
+  Force max component initial, final = 19.003649 3.2666119
+  Final line search alpha, max atom move = 1.8142391e-11 5.926415e-11
+  Iterations, force evaluations = 47 149
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.021296   | 0.021296   | 0.021296   |   0.0 | 72.49
+Bond    | 0.0048544  | 0.0048544  | 0.0048544  |   0.0 | 16.52
+Neigh   | 0.00196    | 0.00196    | 0.00196    |   0.0 |  6.67
+Comm    | 0.00071678 | 0.00071678 | 0.00071678 |   0.0 |  2.44
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.0005507  |            |       |  1.87
+
+Nlocal:            331 ave         331 max         331 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           2235 ave        2235 max        2235 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          21127 ave       21127 max       21127 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 21127
+Ave neighs/atom = 63.827795
+Ave special neighs/atom = 5.8126888
+Neighbor list builds = 1
+Dangerous builds = 0
+
+# Obtain new stress tensor
+
+variable tmp equal pxx
+variable pxx1 equal ${tmp}
+variable pxx1 equal 15727.4867155037
+variable tmp equal pyy
+variable pyy1 equal ${tmp}
+variable pyy1 equal 14796.9193320525
+variable tmp equal pzz
+variable pzz1 equal ${tmp}
+variable pzz1 equal 8122.03589519257
+variable tmp equal pxy
+variable pxy1 equal ${tmp}
+variable pxy1 equal -283.513754074234
+variable tmp equal pxz
+variable pxz1 equal ${tmp}
+variable pxz1 equal -804.848970007846
+variable tmp equal pyz
+variable pyz1 equal ${tmp}
+variable pyz1 equal -370.790115638776
+
+# Compute elastic constant from pressure tensor
+
+variable C1neg equal ${d1}
+variable C1neg equal 38.2029605516606
+variable C2neg equal ${d2}
+variable C2neg equal 9.976096335515
+variable C3neg equal ${d3}
+variable C3neg equal 20.2775523915215
+variable C4neg equal ${d4}
+variable C4neg equal 0.627575127598195
+variable C5neg equal ${d5}
+variable C5neg equal 1.31957738771737
+variable C6neg equal ${d6}
+variable C6neg equal -0.154724430238355
+
+# Reset box and simulation parameters
+
+clear
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+box tilt large
+
+The 'box' command has been removed and will be ignored
+
+read_restart restart_333-RV-32-vasp.equil
+Reading restart file ...
+  restart file = 10 Sep 2025, LAMMPS = 10 Sep 2025
+  restoring atom style full from restart
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-8.2051541 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  1 by 1 by 1 MPI processor grid
+  restoring pair style lj/cut from restart
+  restoring bond style harmonic from restart
+  restoring angle style hybrid from restart
+  restoring dihedral style harmonic from restart
+  331 atoms
+  336 bonds
+  626 angles
+  732 dihedrals
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        1       
+  special bond factors coul:  0        0        1       
+     4 = max # of 1-2 neighbors
+    10 = max # of 1-3 neighbors
+    14 = max # of special neighbors
+  special bonds CPU = 0.000 seconds
+  read_restart CPU = 0.001 seconds
+include ./input/angles_333-RV-32-vasp.mod
+angle_style hybrid fourier cosine/periodic
+angle_coeff 1 fourier 114.246973        0.343737        0.374972        0.281246
+angle_coeff 2 fourier 157.882480        0.343737        0.374972        0.281246
+angle_coeff 3 fourier 221.735285        0.343737        0.374972        0.281246
+angle_coeff 4 fourier 58.020602        0.343737        0.374972        0.281246
+angle_coeff 5 fourier 32.417871        0.343737        0.374972        0.281246
+angle_coeff 6 fourier 83.380072        0.343737        0.374972        0.281246
+angle_coeff 7 fourier 90.420412        0.343737        0.374972        0.281246
+angle_coeff 8 fourier 75.498766        0.343737        0.374972        0.281246
+angle_coeff 9 cosine/periodic 88.853997              -1               3
+
+# Positive deformation
+
+variable delta equal ${up}*${len0}
+variable delta equal 0.02*${len0}
+variable delta equal 0.02*15.7098403020505
+variable deltaxy equal ${up}*xy
+variable deltaxy equal 0.02*xy
+variable deltaxz equal ${up}*xz
+variable deltaxz equal 0.02*xz
+variable deltayz equal ${up}*yz
+variable deltayz equal 0.02*yz
+if "${dir} == 1" then    "change_box all x delta 0 ${delta} xy delta ${deltaxy} xz delta ${deltaxz} remap units box"
+change_box all x delta 0 ${delta} xy delta ${deltaxy} xz delta ${deltaxz} remap units box
+change_box all x delta 0 0.31419680604101 xy delta ${deltaxy} xz delta ${deltaxz} remap units box
+change_box all x delta 0 0.31419680604101 xy delta -0.164103082572306 xz delta ${deltaxz} remap units box
+change_box all x delta 0 0.31419680604101 xy delta -0.164103082572306 xz delta -0.00291568471700562 remap units box
+Changing box ...
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (16.023483 13.087519 17.525118) with tilt (-8.2051541 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (16.023483 13.087519 17.525118) with tilt (-8.3692572 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (16.023483 13.087519 17.525118) with tilt (-8.3692572 -0.14869992 -2.005682)
+if "${dir} == 2" then    "change_box all y delta 0 ${delta} yz delta ${deltayz} remap units box"
+if "${dir} == 3" then    "change_box all z delta 0 ${delta} remap units box"
+if "${dir} == 4" then    "change_box all yz delta ${delta} remap units box"
+if "${dir} == 5" then    "change_box all xz delta ${delta} remap units box"
+if "${dir} == 6" then    "change_box all xy delta ${delta} remap units box"
+
+# Relax atoms positions
+
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+minimize 0 ${ftol} ${maxiter} ${maxeval}
+minimize 0 1e-10 ${maxiter} ${maxeval}
+minimize 0 1e-10 100000 ${maxeval}
+minimize 0 1e-10 100000 100000
+Generated 28 of 28 mixed pair_coeff terms from arithmetic mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 8 5 6
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton/tri
+      stencil: half/bin/3d/tri
+      bin: standard
+WARNING: Inconsistent image flags
+For more information see https://docs.lammps.org/err0027 (src/domain.cpp:1052)
+Per MPI rank memory allocation (min/avg/max) = 19.51 | 19.51 | 19.51 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+        64   0             -431.71235      244.35955     -187.35279     -12965.616    
+       118   0             -429.91145      206.64443     -223.26702      3627.5496    
+Loop time of 0.03108 on 1 procs for 54 steps with 331 atoms
+
+109.1% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = linesearch alpha is zero
+  Energy initial, next-to-last, final = 
+     -187.352791601805  -223.267015685008  -223.267015685008
+  Force two-norm initial, final = 155.17621 13.651842
+  Force max component initial, final = 19.206794 2.3840636
+  Final line search alpha, max atom move = 4.4147412e-11 1.0525024e-10
+  Iterations, force evaluations = 54 163
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.022451   | 0.022451   | 0.022451   |   0.0 | 72.24
+Bond    | 0.0054389  | 0.0054389  | 0.0054389  |   0.0 | 17.50
+Neigh   | 0.0018193  | 0.0018193  | 0.0018193  |   0.0 |  5.85
+Comm    | 0.00078753 | 0.00078753 | 0.00078753 |   0.0 |  2.53
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.0005833  |            |       |  1.88
+
+Nlocal:            331 ave         331 max         331 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           2187 ave        2187 max        2187 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          20285 ave       20285 max       20285 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 20285
+Ave neighs/atom = 61.283988
+Ave special neighs/atom = 5.8126888
+Neighbor list builds = 1
+Dangerous builds = 0
+
+# Obtain new stress tensor
+
+variable tmp equal pe
+variable e1 equal ${tmp}
+variable e1 equal -223.267015685008
+variable tmp equal press
+variable p1 equal ${tmp}
+variable p1 equal 3627.5495575232
+variable tmp equal pxx
+variable pxx1 equal ${tmp}
+variable pxx1 equal 1909.72477071163
+variable tmp equal pyy
+variable pyy1 equal ${tmp}
+variable pyy1 equal 7898.43970457555
+variable tmp equal pzz
+variable pzz1 equal ${tmp}
+variable pzz1 equal 1074.48419728242
+variable tmp equal pxy
+variable pxy1 equal ${tmp}
+variable pxy1 equal 684.570817986786
+variable tmp equal pxz
+variable pxz1 equal ${tmp}
+variable pxz1 equal -124.473891785831
+variable tmp equal pyz
+variable pyz1 equal ${tmp}
+variable pyz1 equal 23.0862948565651
+
+# Compute elastic constant from pressure tensor
+
+variable C1pos equal ${d1}
+variable C1pos equal 30.8858491722998
+variable C2pos equal ${d2}
+variable C2pos equal 24.5163018018697
+variable C3pos equal ${d3}
+variable C3pos equal 14.9602060980293
+variable C4pos equal ${d4}
+variable C4pos equal -2.5969571800749
+variable C5pos equal ${d5}
+variable C5pos equal -4.72145277882745
+variable C6pos equal ${d6}
+variable C6pos equal -4.68569843006675
+
+# Combine positive and negative
+
+variable C1${dir} equal 0.5*(${C1neg}+${C1pos})
+variable C11 equal 0.5*(${C1neg}+${C1pos})
+variable C11 equal 0.5*(38.2029605516606+${C1pos})
+variable C11 equal 0.5*(38.2029605516606+30.8858491722998)
+variable C2${dir} equal 0.5*(${C2neg}+${C2pos})
+variable C21 equal 0.5*(${C2neg}+${C2pos})
+variable C21 equal 0.5*(9.976096335515+${C2pos})
+variable C21 equal 0.5*(9.976096335515+24.5163018018697)
+variable C3${dir} equal 0.5*(${C3neg}+${C3pos})
+variable C31 equal 0.5*(${C3neg}+${C3pos})
+variable C31 equal 0.5*(20.2775523915215+${C3pos})
+variable C31 equal 0.5*(20.2775523915215+14.9602060980293)
+variable C4${dir} equal 0.5*(${C4neg}+${C4pos})
+variable C41 equal 0.5*(${C4neg}+${C4pos})
+variable C41 equal 0.5*(0.627575127598195+${C4pos})
+variable C41 equal 0.5*(0.627575127598195+-2.5969571800749)
+variable C5${dir} equal 0.5*(${C5neg}+${C5pos})
+variable C51 equal 0.5*(${C5neg}+${C5pos})
+variable C51 equal 0.5*(1.31957738771737+${C5pos})
+variable C51 equal 0.5*(1.31957738771737+-4.72145277882745)
+variable C6${dir} equal 0.5*(${C6neg}+${C6pos})
+variable C61 equal 0.5*(${C6neg}+${C6pos})
+variable C61 equal 0.5*(-0.154724430238355+${C6pos})
+variable C61 equal 0.5*(-0.154724430238355+-4.68569843006675)
+
+# Delete dir to make sure it is not reused
+
+variable dir delete
+
+# uyy Perturbation
+
+variable dir equal 2
+include ./input/displace_333-RV-32-vasp.mod
+if "${dir} == 1" then    "variable len0 equal ${lx0}"
+if "${dir} == 2" then    "variable len0 equal ${ly0}"
+variable len0 equal ${ly0}
+variable len0 equal 13.0882469592108
+if "${dir} == 3" then    "variable len0 equal ${lz0}"
+if "${dir} == 4" then    "variable len0 equal ${lz0}"
+if "${dir} == 5" then    "variable len0 equal ${lz0}"
+if "${dir} == 6" then    "variable len0 equal ${ly0}"
+
+# Reset box and simulation parameters
+
+clear
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+box tilt large
+
+The 'box' command has been removed and will be ignored
+
+read_restart restart_333-RV-32-vasp.equil
+Reading restart file ...
+  restart file = 10 Sep 2025, LAMMPS = 10 Sep 2025
+  restoring atom style full from restart
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-8.2051541 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  1 by 1 by 1 MPI processor grid
+  restoring pair style lj/cut from restart
+  restoring bond style harmonic from restart
+  restoring angle style hybrid from restart
+  restoring dihedral style harmonic from restart
+  331 atoms
+  336 bonds
+  626 angles
+  732 dihedrals
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        1       
+  special bond factors coul:  0        0        1       
+     4 = max # of 1-2 neighbors
+    10 = max # of 1-3 neighbors
+    14 = max # of special neighbors
+  special bonds CPU = 0.000 seconds
+  read_restart CPU = 0.001 seconds
+include ./input/angles_333-RV-32-vasp.mod
+angle_style hybrid fourier cosine/periodic
+angle_coeff 1 fourier 114.246973        0.343737        0.374972        0.281246
+angle_coeff 2 fourier 157.882480        0.343737        0.374972        0.281246
+angle_coeff 3 fourier 221.735285        0.343737        0.374972        0.281246
+angle_coeff 4 fourier 58.020602        0.343737        0.374972        0.281246
+angle_coeff 5 fourier 32.417871        0.343737        0.374972        0.281246
+angle_coeff 6 fourier 83.380072        0.343737        0.374972        0.281246
+angle_coeff 7 fourier 90.420412        0.343737        0.374972        0.281246
+angle_coeff 8 fourier 75.498766        0.343737        0.374972        0.281246
+angle_coeff 9 cosine/periodic 88.853997              -1               3
+
+# Negative deformation
+
+variable delta equal -${up}*${len0}
+variable delta equal -0.02*${len0}
+variable delta equal -0.02*13.0882469592108
+variable deltaxy equal -${up}*xy
+variable deltaxy equal -0.02*xy
+variable deltaxz equal -${up}*xz
+variable deltaxz equal -0.02*xz
+variable deltayz equal -${up}*yz
+variable deltayz equal -0.02*yz
+if "${dir} == 1" then    "change_box all x delta 0 ${delta} xy delta ${deltaxy} xz delta ${deltaxz} remap units box"
+if "${dir} == 2" then    "change_box all y delta 0 ${delta} yz delta ${deltayz} remap units box"
+change_box all y delta 0 ${delta} yz delta ${deltayz} remap units box
+change_box all y delta 0 -0.261764939184216 yz delta ${deltayz} remap units box
+change_box all y delta 0 -0.261764939184216 yz delta 0.0401136406840056 remap units box
+Changing box ...
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 12.825755 17.525118) with tilt (-8.2051541 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 12.825755 17.525118) with tilt (-8.2051541 -0.14578424 -1.9655684)
+if "${dir} == 3" then    "change_box all z delta 0 ${delta} remap units box"
+if "${dir} == 4" then    "change_box all yz delta ${delta} remap units box"
+if "${dir} == 5" then    "change_box all xz delta ${delta} remap units box"
+if "${dir} == 6" then    "change_box all xy delta ${delta} remap units box"
+
+# Relax atoms positions
+
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+minimize 0 ${ftol} ${maxiter} ${maxeval}
+minimize 0 1e-10 ${maxiter} ${maxeval}
+minimize 0 1e-10 100000 ${maxeval}
+minimize 0 1e-10 100000 100000
+Generated 28 of 28 mixed pair_coeff terms from arithmetic mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 7 5 6
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton/tri
+      stencil: half/bin/3d/tri
+      bin: standard
+WARNING: Inconsistent image flags
+For more information see https://docs.lammps.org/err0027 (src/domain.cpp:1052)
+Per MPI rank memory allocation (min/avg/max) = 19.51 | 19.51 | 19.51 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+        64   0             -414.16532      248.36044     -165.80488      29494.968    
+       123   0             -418.34573      213.038       -205.30774      12157.091    
+Loop time of 0.0361725 on 1 procs for 59 steps with 331 atoms
+
+109.1% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = linesearch alpha is zero
+  Energy initial, next-to-last, final = 
+     -165.804884953659  -205.307737177972  -205.307737177972
+  Force two-norm initial, final = 161.772 15.657541
+  Force max component initial, final = 20.603882 3.1811569
+  Final line search alpha, max atom move = 2.6204682e-11 8.3361203e-11
+  Iterations, force evaluations = 59 173
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.026734   | 0.026734   | 0.026734   |   0.0 | 73.91
+Bond    | 0.0059022  | 0.0059022  | 0.0059022  |   0.0 | 16.32
+Neigh   | 0.0020206  | 0.0020206  | 0.0020206  |   0.0 |  5.59
+Comm    | 0.00085633 | 0.00085633 | 0.00085633 |   0.0 |  2.37
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.000659   |            |       |  1.82
+
+Nlocal:            331 ave         331 max         331 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           2239 ave        2239 max        2239 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          21120 ave       21120 max       21120 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 21120
+Ave neighs/atom = 63.806647
+Ave special neighs/atom = 5.8126888
+Neighbor list builds = 1
+Dangerous builds = 0
+
+# Obtain new stress tensor
+
+variable tmp equal pxx
+variable pxx1 equal ${tmp}
+variable pxx1 equal 12105.3299327811
+variable tmp equal pyy
+variable pyy1 equal ${tmp}
+variable pyy1 equal 17082.6270922015
+variable tmp equal pzz
+variable pzz1 equal ${tmp}
+variable pzz1 equal 7283.31658391042
+variable tmp equal pxy
+variable pxy1 equal ${tmp}
+variable pxy1 equal 78.6373539795382
+variable tmp equal pxz
+variable pxz1 equal ${tmp}
+variable pxz1 equal -397.897101389204
+variable tmp equal pyz
+variable pyz1 equal ${tmp}
+variable pyz1 equal 306.838324023734
+
+# Compute elastic constant from pressure tensor
+
+variable C1neg equal ${d1}
+variable C1neg equal 20.0921766380476
+variable C2neg equal ${d2}
+variable C2neg equal 21.40463513626
+variable C3neg equal ${d3}
+variable C3neg equal 16.0839558351107
+variable C4neg equal ${d4}
+variable C4neg equal 4.01571732591075
+variable C5neg equal ${d5}
+variable C5neg equal 3.35433673081058
+variable C6neg equal ${d6}
+variable C6neg equal 1.65603111003051
+
+# Reset box and simulation parameters
+
+clear
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+box tilt large
+
+The 'box' command has been removed and will be ignored
+
+read_restart restart_333-RV-32-vasp.equil
+Reading restart file ...
+  restart file = 10 Sep 2025, LAMMPS = 10 Sep 2025
+  restoring atom style full from restart
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-8.2051541 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  1 by 1 by 1 MPI processor grid
+  restoring pair style lj/cut from restart
+  restoring bond style harmonic from restart
+  restoring angle style hybrid from restart
+  restoring dihedral style harmonic from restart
+  331 atoms
+  336 bonds
+  626 angles
+  732 dihedrals
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        1       
+  special bond factors coul:  0        0        1       
+     4 = max # of 1-2 neighbors
+    10 = max # of 1-3 neighbors
+    14 = max # of special neighbors
+  special bonds CPU = 0.000 seconds
+  read_restart CPU = 0.001 seconds
+include ./input/angles_333-RV-32-vasp.mod
+angle_style hybrid fourier cosine/periodic
+angle_coeff 1 fourier 114.246973        0.343737        0.374972        0.281246
+angle_coeff 2 fourier 157.882480        0.343737        0.374972        0.281246
+angle_coeff 3 fourier 221.735285        0.343737        0.374972        0.281246
+angle_coeff 4 fourier 58.020602        0.343737        0.374972        0.281246
+angle_coeff 5 fourier 32.417871        0.343737        0.374972        0.281246
+angle_coeff 6 fourier 83.380072        0.343737        0.374972        0.281246
+angle_coeff 7 fourier 90.420412        0.343737        0.374972        0.281246
+angle_coeff 8 fourier 75.498766        0.343737        0.374972        0.281246
+angle_coeff 9 cosine/periodic 88.853997              -1               3
+
+# Positive deformation
+
+variable delta equal ${up}*${len0}
+variable delta equal 0.02*${len0}
+variable delta equal 0.02*13.0882469592108
+variable deltaxy equal ${up}*xy
+variable deltaxy equal 0.02*xy
+variable deltaxz equal ${up}*xz
+variable deltaxz equal 0.02*xz
+variable deltayz equal ${up}*yz
+variable deltayz equal 0.02*yz
+if "${dir} == 1" then    "change_box all x delta 0 ${delta} xy delta ${deltaxy} xz delta ${deltaxz} remap units box"
+if "${dir} == 2" then    "change_box all y delta 0 ${delta} yz delta ${deltayz} remap units box"
+change_box all y delta 0 ${delta} yz delta ${deltayz} remap units box
+change_box all y delta 0 0.261764939184216 yz delta ${deltayz} remap units box
+change_box all y delta 0 0.261764939184216 yz delta -0.0401136406840056 remap units box
+Changing box ...
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.349284 17.525118) with tilt (-8.2051541 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.349284 17.525118) with tilt (-8.2051541 -0.14578424 -2.0457957)
+if "${dir} == 3" then    "change_box all z delta 0 ${delta} remap units box"
+if "${dir} == 4" then    "change_box all yz delta ${delta} remap units box"
+if "${dir} == 5" then    "change_box all xz delta ${delta} remap units box"
+if "${dir} == 6" then    "change_box all xy delta ${delta} remap units box"
+
+# Relax atoms positions
+
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+minimize 0 ${ftol} ${maxiter} ${maxeval}
+minimize 0 1e-10 ${maxiter} ${maxeval}
+minimize 0 1e-10 100000 ${maxeval}
+minimize 0 1e-10 100000 100000
+Generated 28 of 28 mixed pair_coeff terms from arithmetic mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 7 5 6
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton/tri
+      stencil: half/bin/3d/tri
+      bin: standard
+WARNING: Inconsistent image flags
+For more information see https://docs.lammps.org/err0027 (src/domain.cpp:1052)
+Per MPI rank memory allocation (min/avg/max) = 19.51 | 19.51 | 19.51 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+        64   0             -431.71927      239.16165     -192.55762     -12160.834    
+        76   0             -433.44725      219.99459     -213.45266      4175.9661    
+Loop time of 0.0147984 on 1 procs for 12 steps with 331 atoms
+
+109.1% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = linesearch alpha is zero
+  Energy initial, next-to-last, final = 
+     -192.557624872468  -213.452661428804  -213.452661428804
+  Force two-norm initial, final = 166.55461 20.931371
+  Force max component initial, final = 23.900068 3.9138115
+  Final line search alpha, max atom move = 2.1787363e-11 8.5271632e-11
+  Iterations, force evaluations = 12 81
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.011428   | 0.011428   | 0.011428   |   0.0 | 77.22
+Bond    | 0.0027277  | 0.0027277  | 0.0027277  |   0.0 | 18.43
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.00038509 | 0.00038509 | 0.00038509 |   0.0 |  2.60
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.000258   |            |       |  1.74
+
+Nlocal:            331 ave         331 max         331 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           2195 ave        2195 max        2195 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          20301 ave       20301 max       20301 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 20301
+Ave neighs/atom = 61.332326
+Ave special neighs/atom = 5.8126888
+Neighbor list builds = 0
+Dangerous builds = 0
+
+# Obtain new stress tensor
+
+variable tmp equal pe
+variable e1 equal ${tmp}
+variable e1 equal -213.452661428804
+variable tmp equal press
+variable p1 equal ${tmp}
+variable p1 equal 4175.96611103194
+variable tmp equal pxx
+variable pxx1 equal ${tmp}
+variable pxx1 equal 5722.37332869725
+variable tmp equal pyy
+variable pyy1 equal ${tmp}
+variable pyy1 equal 4945.13502072592
+variable tmp equal pzz
+variable pzz1 equal ${tmp}
+variable pzz1 equal 1860.38998367266
+variable tmp equal pxy
+variable pxy1 equal ${tmp}
+variable pxy1 equal 45.2873507493465
+variable tmp equal pxz
+variable pxz1 equal ${tmp}
+variable pxz1 equal -622.348108745523
+variable tmp equal pyz
+variable pyz1 equal ${tmp}
+variable pyz1 equal -261.224115733517
+
+# Compute elastic constant from pressure tensor
+
+variable C1pos equal ${d1}
+variable C1pos equal 11.8226063823717
+variable C2pos equal ${d2}
+variable C2pos equal 39.2828252211179
+variable C3pos equal ${d3}
+variable C3pos equal 11.0306771660781
+variable C4pos equal ${d4}
+variable C4pos equal -1.17540512712449
+variable C5pos equal ${d5}
+variable C5pos equal -2.23208169402899
+variable C6pos equal ${d6}
+variable C6pos equal -1.48928109387955
+
+# Combine positive and negative
+
+variable C1${dir} equal 0.5*(${C1neg}+${C1pos})
+variable C12 equal 0.5*(${C1neg}+${C1pos})
+variable C12 equal 0.5*(20.0921766380476+${C1pos})
+variable C12 equal 0.5*(20.0921766380476+11.8226063823717)
+variable C2${dir} equal 0.5*(${C2neg}+${C2pos})
+variable C22 equal 0.5*(${C2neg}+${C2pos})
+variable C22 equal 0.5*(21.40463513626+${C2pos})
+variable C22 equal 0.5*(21.40463513626+39.2828252211179)
+variable C3${dir} equal 0.5*(${C3neg}+${C3pos})
+variable C32 equal 0.5*(${C3neg}+${C3pos})
+variable C32 equal 0.5*(16.0839558351107+${C3pos})
+variable C32 equal 0.5*(16.0839558351107+11.0306771660781)
+variable C4${dir} equal 0.5*(${C4neg}+${C4pos})
+variable C42 equal 0.5*(${C4neg}+${C4pos})
+variable C42 equal 0.5*(4.01571732591075+${C4pos})
+variable C42 equal 0.5*(4.01571732591075+-1.17540512712449)
+variable C5${dir} equal 0.5*(${C5neg}+${C5pos})
+variable C52 equal 0.5*(${C5neg}+${C5pos})
+variable C52 equal 0.5*(3.35433673081058+${C5pos})
+variable C52 equal 0.5*(3.35433673081058+-2.23208169402899)
+variable C6${dir} equal 0.5*(${C6neg}+${C6pos})
+variable C62 equal 0.5*(${C6neg}+${C6pos})
+variable C62 equal 0.5*(1.65603111003051+${C6pos})
+variable C62 equal 0.5*(1.65603111003051+-1.48928109387955)
+
+# Delete dir to make sure it is not reused
+
+variable dir delete
+
+# uzz Perturbation
+
+variable dir equal 3
+include ./input/displace_333-RV-32-vasp.mod
+if "${dir} == 1" then    "variable len0 equal ${lx0}"
+if "${dir} == 2" then    "variable len0 equal ${ly0}"
+if "${dir} == 3" then    "variable len0 equal ${lz0}"
+variable len0 equal ${lz0}
+variable len0 equal 17.5254324270417
+if "${dir} == 4" then    "variable len0 equal ${lz0}"
+if "${dir} == 5" then    "variable len0 equal ${lz0}"
+if "${dir} == 6" then    "variable len0 equal ${ly0}"
+
+# Reset box and simulation parameters
+
+clear
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+box tilt large
+
+The 'box' command has been removed and will be ignored
+
+read_restart restart_333-RV-32-vasp.equil
+Reading restart file ...
+  restart file = 10 Sep 2025, LAMMPS = 10 Sep 2025
+  restoring atom style full from restart
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-8.2051541 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  1 by 1 by 1 MPI processor grid
+  restoring pair style lj/cut from restart
+  restoring bond style harmonic from restart
+  restoring angle style hybrid from restart
+  restoring dihedral style harmonic from restart
+  331 atoms
+  336 bonds
+  626 angles
+  732 dihedrals
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        1       
+  special bond factors coul:  0        0        1       
+     4 = max # of 1-2 neighbors
+    10 = max # of 1-3 neighbors
+    14 = max # of special neighbors
+  special bonds CPU = 0.000 seconds
+  read_restart CPU = 0.001 seconds
+include ./input/angles_333-RV-32-vasp.mod
+angle_style hybrid fourier cosine/periodic
+angle_coeff 1 fourier 114.246973        0.343737        0.374972        0.281246
+angle_coeff 2 fourier 157.882480        0.343737        0.374972        0.281246
+angle_coeff 3 fourier 221.735285        0.343737        0.374972        0.281246
+angle_coeff 4 fourier 58.020602        0.343737        0.374972        0.281246
+angle_coeff 5 fourier 32.417871        0.343737        0.374972        0.281246
+angle_coeff 6 fourier 83.380072        0.343737        0.374972        0.281246
+angle_coeff 7 fourier 90.420412        0.343737        0.374972        0.281246
+angle_coeff 8 fourier 75.498766        0.343737        0.374972        0.281246
+angle_coeff 9 cosine/periodic 88.853997              -1               3
+
+# Negative deformation
+
+variable delta equal -${up}*${len0}
+variable delta equal -0.02*${len0}
+variable delta equal -0.02*17.5254324270417
+variable deltaxy equal -${up}*xy
+variable deltaxy equal -0.02*xy
+variable deltaxz equal -${up}*xz
+variable deltaxz equal -0.02*xz
+variable deltayz equal -${up}*yz
+variable deltayz equal -0.02*yz
+if "${dir} == 1" then    "change_box all x delta 0 ${delta} xy delta ${deltaxy} xz delta ${deltaxz} remap units box"
+if "${dir} == 2" then    "change_box all y delta 0 ${delta} yz delta ${deltayz} remap units box"
+if "${dir} == 3" then    "change_box all z delta 0 ${delta} remap units box"
+change_box all z delta 0 ${delta} remap units box
+change_box all z delta 0 -0.350508648540834 remap units box
+Changing box ...
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.174609) with tilt (-8.2051541 -0.14578424 -2.005682)
+if "${dir} == 4" then    "change_box all yz delta ${delta} remap units box"
+if "${dir} == 5" then    "change_box all xz delta ${delta} remap units box"
+if "${dir} == 6" then    "change_box all xy delta ${delta} remap units box"
+
+# Relax atoms positions
+
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+minimize 0 ${ftol} ${maxiter} ${maxeval}
+minimize 0 1e-10 ${maxiter} ${maxeval}
+minimize 0 1e-10 100000 ${maxeval}
+minimize 0 1e-10 100000 100000
+Generated 28 of 28 mixed pair_coeff terms from arithmetic mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 7 5 5
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton/tri
+      stencil: half/bin/3d/tri
+      bin: standard
+WARNING: Inconsistent image flags
+For more information see https://docs.lammps.org/err0027 (src/domain.cpp:1052)
+Per MPI rank memory allocation (min/avg/max) = 19.51 | 19.51 | 19.51 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+        64   0             -414.672        240.65671     -174.01529      30291.314    
+        85   0             -423.49886      224.10416     -199.3947       12255.608    
+Loop time of 0.0188924 on 1 procs for 21 steps with 331 atoms
+
+90.9% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = linesearch alpha is zero
+  Energy initial, next-to-last, final = 
+     -174.015286798131  -199.394700485051  -199.394700485051
+  Force two-norm initial, final = 158.75704 20.934148
+  Force max component initial, final = 21.135949 2.9397809
+  Final line search alpha, max atom move = 2.5712159e-11 7.5588113e-11
+  Iterations, force evaluations = 21 97
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.014791   | 0.014791   | 0.014791   |   0.0 | 78.29
+Bond    | 0.0033001  | 0.0033001  | 0.0033001  |   0.0 | 17.47
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.00047173 | 0.00047173 | 0.00047173 |   0.0 |  2.50
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.0003298  |            |       |  1.75
+
+Nlocal:            331 ave         331 max         331 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           2225 ave        2225 max        2225 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          21184 ave       21184 max       21184 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 21184
+Ave neighs/atom = 64
+Ave special neighs/atom = 5.8126888
+Neighbor list builds = 0
+Dangerous builds = 0
+
+# Obtain new stress tensor
+
+variable tmp equal pxx
+variable pxx1 equal ${tmp}
+variable pxx1 equal 12142.0501815591
+variable tmp equal pyy
+variable pyy1 equal ${tmp}
+variable pyy1 equal 14907.3176022355
+variable tmp equal pzz
+variable pzz1 equal ${tmp}
+variable pzz1 equal 9717.45513957507
+variable tmp equal pxy
+variable pxy1 equal ${tmp}
+variable pxy1 equal -497.643381541259
+variable tmp equal pxz
+variable pxz1 equal ${tmp}
+variable pxz1 equal -463.234054855561
+variable tmp equal pyz
+variable pyz1 equal ${tmp}
+variable pyz1 equal -456.862656886943
+
+# Compute elastic constant from pressure tensor
+
+variable C1neg equal ${d1}
+variable C1neg equal 20.2757778819375
+variable C2neg equal ${d2}
+variable C2neg equal 10.52808768643
+variable C3neg equal ${d3}
+variable C3neg equal 28.254648613434
+variable C4neg equal ${d4}
+variable C4neg equal 0.19721242135736
+variable C5neg equal ${d5}
+variable C5neg equal 3.0276519634788
+variable C6neg equal ${d6}
+variable C6neg equal -1.22537256757348
+
+# Reset box and simulation parameters
+
+clear
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+box tilt large
+
+The 'box' command has been removed and will be ignored
+
+read_restart restart_333-RV-32-vasp.equil
+Reading restart file ...
+  restart file = 10 Sep 2025, LAMMPS = 10 Sep 2025
+  restoring atom style full from restart
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-8.2051541 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  1 by 1 by 1 MPI processor grid
+  restoring pair style lj/cut from restart
+  restoring bond style harmonic from restart
+  restoring angle style hybrid from restart
+  restoring dihedral style harmonic from restart
+  331 atoms
+  336 bonds
+  626 angles
+  732 dihedrals
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        1       
+  special bond factors coul:  0        0        1       
+     4 = max # of 1-2 neighbors
+    10 = max # of 1-3 neighbors
+    14 = max # of special neighbors
+  special bonds CPU = 0.000 seconds
+  read_restart CPU = 0.001 seconds
+include ./input/angles_333-RV-32-vasp.mod
+angle_style hybrid fourier cosine/periodic
+angle_coeff 1 fourier 114.246973        0.343737        0.374972        0.281246
+angle_coeff 2 fourier 157.882480        0.343737        0.374972        0.281246
+angle_coeff 3 fourier 221.735285        0.343737        0.374972        0.281246
+angle_coeff 4 fourier 58.020602        0.343737        0.374972        0.281246
+angle_coeff 5 fourier 32.417871        0.343737        0.374972        0.281246
+angle_coeff 6 fourier 83.380072        0.343737        0.374972        0.281246
+angle_coeff 7 fourier 90.420412        0.343737        0.374972        0.281246
+angle_coeff 8 fourier 75.498766        0.343737        0.374972        0.281246
+angle_coeff 9 cosine/periodic 88.853997              -1               3
+
+# Positive deformation
+
+variable delta equal ${up}*${len0}
+variable delta equal 0.02*${len0}
+variable delta equal 0.02*17.5254324270417
+variable deltaxy equal ${up}*xy
+variable deltaxy equal 0.02*xy
+variable deltaxz equal ${up}*xz
+variable deltaxz equal 0.02*xz
+variable deltayz equal ${up}*yz
+variable deltayz equal 0.02*yz
+if "${dir} == 1" then    "change_box all x delta 0 ${delta} xy delta ${deltaxy} xz delta ${deltaxz} remap units box"
+if "${dir} == 2" then    "change_box all y delta 0 ${delta} yz delta ${deltayz} remap units box"
+if "${dir} == 3" then    "change_box all z delta 0 ${delta} remap units box"
+change_box all z delta 0 ${delta} remap units box
+change_box all z delta 0 0.350508648540834 remap units box
+Changing box ...
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.875626) with tilt (-8.2051541 -0.14578424 -2.005682)
+if "${dir} == 4" then    "change_box all yz delta ${delta} remap units box"
+if "${dir} == 5" then    "change_box all xz delta ${delta} remap units box"
+if "${dir} == 6" then    "change_box all xy delta ${delta} remap units box"
+
+# Relax atoms positions
+
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+minimize 0 ${ftol} ${maxiter} ${maxeval}
+minimize 0 1e-10 ${maxiter} ${maxeval}
+minimize 0 1e-10 100000 ${maxeval}
+minimize 0 1e-10 100000 100000
+Generated 28 of 28 mixed pair_coeff terms from arithmetic mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 7 5 6
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton/tri
+      stencil: half/bin/3d/tri
+      bin: standard
+WARNING: Inconsistent image flags
+For more information see https://docs.lammps.org/err0027 (src/domain.cpp:1052)
+Per MPI rank memory allocation (min/avg/max) = 19.51 | 19.51 | 19.51 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+        64   0             -431.23158      247.63369     -183.59789     -12960.299    
+        97   0             -425.7668       210.53281     -215.23399      5229.7972    
+Loop time of 0.0229483 on 1 procs for 33 steps with 331 atoms
+
+109.1% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = linesearch alpha is zero
+  Energy initial, next-to-last, final = 
+     -183.597890777586  -215.233987748715  -215.233987748715
+  Force two-norm initial, final = 155.70478 24.629128
+  Force max component initial, final = 19.179025 4.9596498
+  Final line search alpha, max atom move = 1.1565212e-11 5.73594e-11
+  Iterations, force evaluations = 33 121
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.017758   | 0.017758   | 0.017758   |   0.0 | 77.38
+Bond    | 0.0041692  | 0.0041692  | 0.0041692  |   0.0 | 18.17
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.00058384 | 0.00058384 | 0.00058384 |   0.0 |  2.54
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.000437   |            |       |  1.90
+
+Nlocal:            331 ave         331 max         331 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           2191 ave        2191 max        2191 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          20263 ave       20263 max       20263 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 20263
+Ave neighs/atom = 61.217523
+Ave special neighs/atom = 5.8126888
+Neighbor list builds = 0
+Dangerous builds = 0
+
+# Obtain new stress tensor
+
+variable tmp equal pe
+variable e1 equal ${tmp}
+variable e1 equal -215.233987748715
+variable tmp equal press
+variable p1 equal ${tmp}
+variable p1 equal 5229.79719139116
+variable tmp equal pxx
+variable pxx1 equal ${tmp}
+variable pxx1 equal 5807.51941384824
+variable tmp equal pyy
+variable pyy1 equal ${tmp}
+variable pyy1 equal 9559.39753916881
+variable tmp equal pzz
+variable pzz1 equal ${tmp}
+variable pzz1 equal 322.474621156441
+variable tmp equal pxy
+variable pxy1 equal ${tmp}
+variable pxy1 equal -367.844645370343
+variable tmp equal pxz
+variable pxz1 equal ${tmp}
+variable pxz1 equal -1736.30649013567
+variable tmp equal pyz
+variable pyz1 equal ${tmp}
+variable pyz1 equal -881.325063646268
+
+# Compute elastic constant from pressure tensor
+
+variable C1pos equal ${d1}
+variable C1pos equal 11.3968759566167
+variable C2pos equal ${d2}
+variable C2pos equal 16.2115126289034
+variable C3pos equal ${d3}
+variable C3pos equal 18.7202539786592
+variable C4pos equal ${d4}
+variable C4pos equal 1.92509961243926
+variable C5pos equal ${d5}
+variable C5pos equal 3.33771021292175
+variable C6pos equal ${d6}
+variable C6pos equal 0.5763788867189
+
+# Combine positive and negative
+
+variable C1${dir} equal 0.5*(${C1neg}+${C1pos})
+variable C13 equal 0.5*(${C1neg}+${C1pos})
+variable C13 equal 0.5*(20.2757778819375+${C1pos})
+variable C13 equal 0.5*(20.2757778819375+11.3968759566167)
+variable C2${dir} equal 0.5*(${C2neg}+${C2pos})
+variable C23 equal 0.5*(${C2neg}+${C2pos})
+variable C23 equal 0.5*(10.52808768643+${C2pos})
+variable C23 equal 0.5*(10.52808768643+16.2115126289034)
+variable C3${dir} equal 0.5*(${C3neg}+${C3pos})
+variable C33 equal 0.5*(${C3neg}+${C3pos})
+variable C33 equal 0.5*(28.254648613434+${C3pos})
+variable C33 equal 0.5*(28.254648613434+18.7202539786592)
+variable C4${dir} equal 0.5*(${C4neg}+${C4pos})
+variable C43 equal 0.5*(${C4neg}+${C4pos})
+variable C43 equal 0.5*(0.19721242135736+${C4pos})
+variable C43 equal 0.5*(0.19721242135736+1.92509961243926)
+variable C5${dir} equal 0.5*(${C5neg}+${C5pos})
+variable C53 equal 0.5*(${C5neg}+${C5pos})
+variable C53 equal 0.5*(3.0276519634788+${C5pos})
+variable C53 equal 0.5*(3.0276519634788+3.33771021292175)
+variable C6${dir} equal 0.5*(${C6neg}+${C6pos})
+variable C63 equal 0.5*(${C6neg}+${C6pos})
+variable C63 equal 0.5*(-1.22537256757348+${C6pos})
+variable C63 equal 0.5*(-1.22537256757348+0.5763788867189)
+
+# Delete dir to make sure it is not reused
+
+variable dir delete
+
+# uyz Perturbation
+
+variable dir equal 4
+include ./input/displace_333-RV-32-vasp.mod
+if "${dir} == 1" then    "variable len0 equal ${lx0}"
+if "${dir} == 2" then    "variable len0 equal ${ly0}"
+if "${dir} == 3" then    "variable len0 equal ${lz0}"
+if "${dir} == 4" then    "variable len0 equal ${lz0}"
+variable len0 equal ${lz0}
+variable len0 equal 17.5254324270417
+if "${dir} == 5" then    "variable len0 equal ${lz0}"
+if "${dir} == 6" then    "variable len0 equal ${ly0}"
+
+# Reset box and simulation parameters
+
+clear
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+box tilt large
+
+The 'box' command has been removed and will be ignored
+
+read_restart restart_333-RV-32-vasp.equil
+Reading restart file ...
+  restart file = 10 Sep 2025, LAMMPS = 10 Sep 2025
+  restoring atom style full from restart
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-8.2051541 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  1 by 1 by 1 MPI processor grid
+  restoring pair style lj/cut from restart
+  restoring bond style harmonic from restart
+  restoring angle style hybrid from restart
+  restoring dihedral style harmonic from restart
+  331 atoms
+  336 bonds
+  626 angles
+  732 dihedrals
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        1       
+  special bond factors coul:  0        0        1       
+     4 = max # of 1-2 neighbors
+    10 = max # of 1-3 neighbors
+    14 = max # of special neighbors
+  special bonds CPU = 0.000 seconds
+  read_restart CPU = 0.001 seconds
+include ./input/angles_333-RV-32-vasp.mod
+angle_style hybrid fourier cosine/periodic
+angle_coeff 1 fourier 114.246973        0.343737        0.374972        0.281246
+angle_coeff 2 fourier 157.882480        0.343737        0.374972        0.281246
+angle_coeff 3 fourier 221.735285        0.343737        0.374972        0.281246
+angle_coeff 4 fourier 58.020602        0.343737        0.374972        0.281246
+angle_coeff 5 fourier 32.417871        0.343737        0.374972        0.281246
+angle_coeff 6 fourier 83.380072        0.343737        0.374972        0.281246
+angle_coeff 7 fourier 90.420412        0.343737        0.374972        0.281246
+angle_coeff 8 fourier 75.498766        0.343737        0.374972        0.281246
+angle_coeff 9 cosine/periodic 88.853997              -1               3
+
+# Negative deformation
+
+variable delta equal -${up}*${len0}
+variable delta equal -0.02*${len0}
+variable delta equal -0.02*17.5254324270417
+variable deltaxy equal -${up}*xy
+variable deltaxy equal -0.02*xy
+variable deltaxz equal -${up}*xz
+variable deltaxz equal -0.02*xz
+variable deltayz equal -${up}*yz
+variable deltayz equal -0.02*yz
+if "${dir} == 1" then    "change_box all x delta 0 ${delta} xy delta ${deltaxy} xz delta ${deltaxz} remap units box"
+if "${dir} == 2" then    "change_box all y delta 0 ${delta} yz delta ${deltayz} remap units box"
+if "${dir} == 3" then    "change_box all z delta 0 ${delta} remap units box"
+if "${dir} == 4" then    "change_box all yz delta ${delta} remap units box"
+change_box all yz delta ${delta} remap units box
+change_box all yz delta -0.350508648540834 remap units box
+Changing box ...
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-8.2051541 -0.14578424 -2.3561907)
+if "${dir} == 5" then    "change_box all xz delta ${delta} remap units box"
+if "${dir} == 6" then    "change_box all xy delta ${delta} remap units box"
+
+# Relax atoms positions
+
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+minimize 0 ${ftol} ${maxiter} ${maxeval}
+minimize 0 1e-10 ${maxiter} ${maxeval}
+minimize 0 1e-10 100000 ${maxeval}
+minimize 0 1e-10 100000 100000
+Generated 28 of 28 mixed pair_coeff terms from arithmetic mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 7 5 6
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton/tri
+      stencil: half/bin/3d/tri
+      bin: standard
+WARNING: Inconsistent image flags
+For more information see https://docs.lammps.org/err0027 (src/domain.cpp:1052)
+Per MPI rank memory allocation (min/avg/max) = 19.51 | 19.51 | 19.51 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+        64   0             -423.9319       230.73045     -193.20146      7942.5418    
+       101   0             -424.93632      210.6797      -214.25663      7811.6129    
+Loop time of 0.0271471 on 1 procs for 37 steps with 331 atoms
+
+109.1% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = linesearch alpha is zero
+  Energy initial, next-to-last, final = 
+     -193.201455616854  -214.256626604394  -214.256626604394
+  Force two-norm initial, final = 111.58997 19.919609
+  Force max component initial, final = 12.161985 3.1814603
+  Final line search alpha, max atom move = 1.7459769e-11 5.5547563e-11
+  Iterations, force evaluations = 37 129
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.019421   | 0.019421   | 0.019421   |   0.0 | 71.54
+Bond    | 0.0044403  | 0.0044403  | 0.0044403  |   0.0 | 16.36
+Neigh   | 0.002103   | 0.002103   | 0.002103   |   0.0 |  7.75
+Comm    | 0.00069453 | 0.00069453 | 0.00069453 |   0.0 |  2.56
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.0004878  |            |       |  1.80
+
+Nlocal:            331 ave         331 max         331 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           2231 ave        2231 max        2231 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          20686 ave       20686 max       20686 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 20686
+Ave neighs/atom = 62.495468
+Ave special neighs/atom = 5.8126888
+Neighbor list builds = 1
+Dangerous builds = 0
+
+# Obtain new stress tensor
+
+variable tmp equal pxx
+variable pxx1 equal ${tmp}
+variable pxx1 equal 7725.14174740281
+variable tmp equal pyy
+variable pyy1 equal ${tmp}
+variable pyy1 equal 11002.0375744576
+variable tmp equal pzz
+variable pzz1 equal ${tmp}
+variable pzz1 equal 4707.65925009348
+variable tmp equal pxy
+variable pxy1 equal ${tmp}
+variable pxy1 equal -472.995382895191
+variable tmp equal pxz
+variable pxz1 equal ${tmp}
+variable pxz1 equal -1136.08624684486
+variable tmp equal pyz
+variable pyz1 equal ${tmp}
+variable pyz1 equal 107.724025740762
+
+# Compute elastic constant from pressure tensor
+
+variable C1neg equal ${d1}
+variable C1neg equal -1.8087642888439
+variable C2neg equal ${d2}
+variable C2neg equal -8.9983124524595
+variable C3neg equal ${d3}
+variable C3neg equal 3.205669166026
+variable C4neg equal ${d4}
+variable C4neg equal 3.02014583449588
+variable C5neg equal ${d5}
+variable C5neg equal -0.3366089964677
+variable C6neg equal ${d6}
+variable C6neg equal -1.10213257434314
+
+# Reset box and simulation parameters
+
+clear
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+box tilt large
+
+The 'box' command has been removed and will be ignored
+
+read_restart restart_333-RV-32-vasp.equil
+Reading restart file ...
+  restart file = 10 Sep 2025, LAMMPS = 10 Sep 2025
+  restoring atom style full from restart
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-8.2051541 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  1 by 1 by 1 MPI processor grid
+  restoring pair style lj/cut from restart
+  restoring bond style harmonic from restart
+  restoring angle style hybrid from restart
+  restoring dihedral style harmonic from restart
+  331 atoms
+  336 bonds
+  626 angles
+  732 dihedrals
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        1       
+  special bond factors coul:  0        0        1       
+     4 = max # of 1-2 neighbors
+    10 = max # of 1-3 neighbors
+    14 = max # of special neighbors
+  special bonds CPU = 0.000 seconds
+  read_restart CPU = 0.001 seconds
+include ./input/angles_333-RV-32-vasp.mod
+angle_style hybrid fourier cosine/periodic
+angle_coeff 1 fourier 114.246973        0.343737        0.374972        0.281246
+angle_coeff 2 fourier 157.882480        0.343737        0.374972        0.281246
+angle_coeff 3 fourier 221.735285        0.343737        0.374972        0.281246
+angle_coeff 4 fourier 58.020602        0.343737        0.374972        0.281246
+angle_coeff 5 fourier 32.417871        0.343737        0.374972        0.281246
+angle_coeff 6 fourier 83.380072        0.343737        0.374972        0.281246
+angle_coeff 7 fourier 90.420412        0.343737        0.374972        0.281246
+angle_coeff 8 fourier 75.498766        0.343737        0.374972        0.281246
+angle_coeff 9 cosine/periodic 88.853997              -1               3
+
+# Positive deformation
+
+variable delta equal ${up}*${len0}
+variable delta equal 0.02*${len0}
+variable delta equal 0.02*17.5254324270417
+variable deltaxy equal ${up}*xy
+variable deltaxy equal 0.02*xy
+variable deltaxz equal ${up}*xz
+variable deltaxz equal 0.02*xz
+variable deltayz equal ${up}*yz
+variable deltayz equal 0.02*yz
+if "${dir} == 1" then    "change_box all x delta 0 ${delta} xy delta ${deltaxy} xz delta ${deltaxz} remap units box"
+if "${dir} == 2" then    "change_box all y delta 0 ${delta} yz delta ${deltayz} remap units box"
+if "${dir} == 3" then    "change_box all z delta 0 ${delta} remap units box"
+if "${dir} == 4" then    "change_box all yz delta ${delta} remap units box"
+change_box all yz delta ${delta} remap units box
+change_box all yz delta 0.350508648540834 remap units box
+Changing box ...
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-8.2051541 -0.14578424 -1.6551734)
+if "${dir} == 5" then    "change_box all xz delta ${delta} remap units box"
+if "${dir} == 6" then    "change_box all xy delta ${delta} remap units box"
+
+# Relax atoms positions
+
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+minimize 0 ${ftol} ${maxiter} ${maxeval}
+minimize 0 1e-10 ${maxiter} ${maxeval}
+minimize 0 1e-10 100000 ${maxeval}
+minimize 0 1e-10 100000 100000
+Generated 28 of 28 mixed pair_coeff terms from arithmetic mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 7 5 6
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton/tri
+      stencil: half/bin/3d/tri
+      bin: standard
+WARNING: Inconsistent image flags
+For more information see https://docs.lammps.org/err0027 (src/domain.cpp:1052)
+Per MPI rank memory allocation (min/avg/max) = 19.51 | 19.51 | 19.51 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+        64   0             -425.07601      232.00685     -193.06916      8362.4869    
+        93   0             -428.52843      218.84094     -209.68749      7464.2644    
+Loop time of 0.0223386 on 1 procs for 29 steps with 331 atoms
+
+109.1% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = linesearch alpha is zero
+  Energy initial, next-to-last, final = 
+     -193.069164674987  -209.687485483792  -209.687485483792
+  Force two-norm initial, final = 107.18114 21.986344
+  Force max component initial, final = 12.524101 4.1072037
+  Final line search alpha, max atom move = 1.4160347e-11 5.815943e-11
+  Iterations, force evaluations = 29 113
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.01731    | 0.01731    | 0.01731    |   0.0 | 77.49
+Bond    | 0.0040326  | 0.0040326  | 0.0040326  |   0.0 | 18.05
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.00055501 | 0.00055501 | 0.00055501 |   0.0 |  2.48
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.0004406  |            |       |  1.97
+
+Nlocal:            331 ave         331 max         331 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           2205 ave        2205 max        2205 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          20718 ave       20718 max       20718 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 20718
+Ave neighs/atom = 62.592145
+Ave special neighs/atom = 5.8126888
+Neighbor list builds = 0
+Dangerous builds = 0
+
+# Obtain new stress tensor
+
+variable tmp equal pe
+variable e1 equal ${tmp}
+variable e1 equal -209.687485483792
+variable tmp equal press
+variable p1 equal ${tmp}
+variable p1 equal 7464.26443607222
+variable tmp equal pxx
+variable pxx1 equal ${tmp}
+variable pxx1 equal 7653.15060702957
+variable tmp equal pyy
+variable pyy1 equal ${tmp}
+variable pyy1 equal 10906.5513658684
+variable tmp equal pzz
+variable pzz1 equal ${tmp}
+variable pzz1 equal 3833.09133531868
+variable tmp equal pxy
+variable pxy1 equal ${tmp}
+variable pxy1 equal -960.401337366016
+variable tmp equal pxz
+variable pxz1 equal ${tmp}
+variable pxz1 equal -529.829996354846
+variable tmp equal pyz
+variable pyz1 equal ${tmp}
+variable pyz1 equal -1280.98950971431
+
+# Compute elastic constant from pressure tensor
+
+variable C1pos equal ${d1}
+variable C1pos equal 2.1687199907101
+variable C2pos equal ${d2}
+variable C2pos equal 9.4757434954055
+variable C3pos equal ${d3}
+variable C3pos equal 1.167170407848
+variable C4pos equal ${d4}
+variable C4pos equal 3.92342184277948
+variable C5pos equal ${d5}
+variable C5pos equal -2.69467225598237
+variable C6pos equal ${d6}
+variable C6pos equal 3.53916234669727
+
+# Combine positive and negative
+
+variable C1${dir} equal 0.5*(${C1neg}+${C1pos})
+variable C14 equal 0.5*(${C1neg}+${C1pos})
+variable C14 equal 0.5*(-1.8087642888439+${C1pos})
+variable C14 equal 0.5*(-1.8087642888439+2.1687199907101)
+variable C2${dir} equal 0.5*(${C2neg}+${C2pos})
+variable C24 equal 0.5*(${C2neg}+${C2pos})
+variable C24 equal 0.5*(-8.9983124524595+${C2pos})
+variable C24 equal 0.5*(-8.9983124524595+9.4757434954055)
+variable C3${dir} equal 0.5*(${C3neg}+${C3pos})
+variable C34 equal 0.5*(${C3neg}+${C3pos})
+variable C34 equal 0.5*(3.205669166026+${C3pos})
+variable C34 equal 0.5*(3.205669166026+1.167170407848)
+variable C4${dir} equal 0.5*(${C4neg}+${C4pos})
+variable C44 equal 0.5*(${C4neg}+${C4pos})
+variable C44 equal 0.5*(3.02014583449588+${C4pos})
+variable C44 equal 0.5*(3.02014583449588+3.92342184277948)
+variable C5${dir} equal 0.5*(${C5neg}+${C5pos})
+variable C54 equal 0.5*(${C5neg}+${C5pos})
+variable C54 equal 0.5*(-0.3366089964677+${C5pos})
+variable C54 equal 0.5*(-0.3366089964677+-2.69467225598237)
+variable C6${dir} equal 0.5*(${C6neg}+${C6pos})
+variable C64 equal 0.5*(${C6neg}+${C6pos})
+variable C64 equal 0.5*(-1.10213257434314+${C6pos})
+variable C64 equal 0.5*(-1.10213257434314+3.53916234669727)
+
+# Delete dir to make sure it is not reused
+
+variable dir delete
+
+# uxz Perturbation
+
+variable dir equal 5
+include ./input/displace_333-RV-32-vasp.mod
+if "${dir} == 1" then    "variable len0 equal ${lx0}"
+if "${dir} == 2" then    "variable len0 equal ${ly0}"
+if "${dir} == 3" then    "variable len0 equal ${lz0}"
+if "${dir} == 4" then    "variable len0 equal ${lz0}"
+if "${dir} == 5" then    "variable len0 equal ${lz0}"
+variable len0 equal ${lz0}
+variable len0 equal 17.5254324270417
+if "${dir} == 6" then    "variable len0 equal ${ly0}"
+
+# Reset box and simulation parameters
+
+clear
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+box tilt large
+
+The 'box' command has been removed and will be ignored
+
+read_restart restart_333-RV-32-vasp.equil
+Reading restart file ...
+  restart file = 10 Sep 2025, LAMMPS = 10 Sep 2025
+  restoring atom style full from restart
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-8.2051541 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  1 by 1 by 1 MPI processor grid
+  restoring pair style lj/cut from restart
+  restoring bond style harmonic from restart
+  restoring angle style hybrid from restart
+  restoring dihedral style harmonic from restart
+  331 atoms
+  336 bonds
+  626 angles
+  732 dihedrals
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        1       
+  special bond factors coul:  0        0        1       
+     4 = max # of 1-2 neighbors
+    10 = max # of 1-3 neighbors
+    14 = max # of special neighbors
+  special bonds CPU = 0.000 seconds
+  read_restart CPU = 0.001 seconds
+include ./input/angles_333-RV-32-vasp.mod
+angle_style hybrid fourier cosine/periodic
+angle_coeff 1 fourier 114.246973        0.343737        0.374972        0.281246
+angle_coeff 2 fourier 157.882480        0.343737        0.374972        0.281246
+angle_coeff 3 fourier 221.735285        0.343737        0.374972        0.281246
+angle_coeff 4 fourier 58.020602        0.343737        0.374972        0.281246
+angle_coeff 5 fourier 32.417871        0.343737        0.374972        0.281246
+angle_coeff 6 fourier 83.380072        0.343737        0.374972        0.281246
+angle_coeff 7 fourier 90.420412        0.343737        0.374972        0.281246
+angle_coeff 8 fourier 75.498766        0.343737        0.374972        0.281246
+angle_coeff 9 cosine/periodic 88.853997              -1               3
+
+# Negative deformation
+
+variable delta equal -${up}*${len0}
+variable delta equal -0.02*${len0}
+variable delta equal -0.02*17.5254324270417
+variable deltaxy equal -${up}*xy
+variable deltaxy equal -0.02*xy
+variable deltaxz equal -${up}*xz
+variable deltaxz equal -0.02*xz
+variable deltayz equal -${up}*yz
+variable deltayz equal -0.02*yz
+if "${dir} == 1" then    "change_box all x delta 0 ${delta} xy delta ${deltaxy} xz delta ${deltaxz} remap units box"
+if "${dir} == 2" then    "change_box all y delta 0 ${delta} yz delta ${deltayz} remap units box"
+if "${dir} == 3" then    "change_box all z delta 0 ${delta} remap units box"
+if "${dir} == 4" then    "change_box all yz delta ${delta} remap units box"
+if "${dir} == 5" then    "change_box all xz delta ${delta} remap units box"
+change_box all xz delta ${delta} remap units box
+change_box all xz delta -0.350508648540834 remap units box
+Changing box ...
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-8.2051541 -0.49629288 -2.005682)
+if "${dir} == 6" then    "change_box all xy delta ${delta} remap units box"
+
+# Relax atoms positions
+
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+minimize 0 ${ftol} ${maxiter} ${maxeval}
+minimize 0 1e-10 ${maxiter} ${maxeval}
+minimize 0 1e-10 100000 ${maxeval}
+minimize 0 1e-10 100000 100000
+Generated 28 of 28 mixed pair_coeff terms from arithmetic mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 7 5 6
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton/tri
+      stencil: half/bin/3d/tri
+      bin: standard
+WARNING: Inconsistent image flags
+For more information see https://docs.lammps.org/err0027 (src/domain.cpp:1052)
+Per MPI rank memory allocation (min/avg/max) = 19.51 | 19.51 | 19.51 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+        64   0             -424.8988       231.74873     -193.15007      8194.7289    
+       137   0             -425.86271      203.99043     -221.87228      7902.7988    
+Loop time of 0.0410917 on 1 procs for 73 steps with 331 atoms
+
+109.1% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = linesearch alpha is zero
+  Energy initial, next-to-last, final = 
+     -193.150070507893  -221.872278554763  -221.872278554763
+  Force two-norm initial, final = 120.99768 13.829763
+  Force max component initial, final = 15.710158 2.3092954
+  Final line search alpha, max atom move = 3.6395076e-11 8.4046981e-11
+  Iterations, force evaluations = 73 199
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.030315   | 0.030315   | 0.030315   |   0.0 | 73.77
+Bond    | 0.0069037  | 0.0069037  | 0.0069037  |   0.0 | 16.80
+Neigh   | 0.0020525  | 0.0020525  | 0.0020525  |   0.0 |  5.00
+Comm    | 0.0010353  | 0.0010353  | 0.0010353  |   0.0 |  2.52
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.0007852  |            |       |  1.91
+
+Nlocal:            331 ave         331 max         331 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           2223 ave        2223 max        2223 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          20684 ave       20684 max       20684 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 20684
+Ave neighs/atom = 62.489426
+Ave special neighs/atom = 5.8126888
+Neighbor list builds = 1
+Dangerous builds = 0
+
+# Obtain new stress tensor
+
+variable tmp equal pxx
+variable pxx1 equal ${tmp}
+variable pxx1 equal 8051.68000640894
+variable tmp equal pyy
+variable pyy1 equal ${tmp}
+variable pyy1 equal 11104.7131198326
+variable tmp equal pzz
+variable pzz1 equal ${tmp}
+variable pzz1 equal 4552.00337798901
+variable tmp equal pxy
+variable pxy1 equal ${tmp}
+variable pxy1 equal 342.028028181412
+variable tmp equal pxz
+variable pxz1 equal ${tmp}
+variable pxz1 equal 1360.8151035459
+variable tmp equal pyz
+variable pyz1 equal ${tmp}
+variable pyz1 equal 99.8294276627166
+
+# Compute elastic constant from pressure tensor
+
+variable C1neg equal ${d1}
+variable C1neg equal -0.17607299381325
+variable C2neg equal ${d2}
+variable C2neg equal -8.4849347255845
+variable C3neg equal ${d3}
+variable C3neg equal 2.42738980550365
+variable C4neg equal ${d4}
+variable C4neg equal 2.98067284410566
+variable C5neg equal ${d5}
+variable C5neg equal 12.1478977554861
+variable C6neg equal ${d6}
+variable C6neg equal 2.97298448103988
+
+# Reset box and simulation parameters
+
+clear
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+box tilt large
+
+The 'box' command has been removed and will be ignored
+
+read_restart restart_333-RV-32-vasp.equil
+Reading restart file ...
+  restart file = 10 Sep 2025, LAMMPS = 10 Sep 2025
+  restoring atom style full from restart
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-8.2051541 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  1 by 1 by 1 MPI processor grid
+  restoring pair style lj/cut from restart
+  restoring bond style harmonic from restart
+  restoring angle style hybrid from restart
+  restoring dihedral style harmonic from restart
+  331 atoms
+  336 bonds
+  626 angles
+  732 dihedrals
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        1       
+  special bond factors coul:  0        0        1       
+     4 = max # of 1-2 neighbors
+    10 = max # of 1-3 neighbors
+    14 = max # of special neighbors
+  special bonds CPU = 0.000 seconds
+  read_restart CPU = 0.001 seconds
+include ./input/angles_333-RV-32-vasp.mod
+angle_style hybrid fourier cosine/periodic
+angle_coeff 1 fourier 114.246973        0.343737        0.374972        0.281246
+angle_coeff 2 fourier 157.882480        0.343737        0.374972        0.281246
+angle_coeff 3 fourier 221.735285        0.343737        0.374972        0.281246
+angle_coeff 4 fourier 58.020602        0.343737        0.374972        0.281246
+angle_coeff 5 fourier 32.417871        0.343737        0.374972        0.281246
+angle_coeff 6 fourier 83.380072        0.343737        0.374972        0.281246
+angle_coeff 7 fourier 90.420412        0.343737        0.374972        0.281246
+angle_coeff 8 fourier 75.498766        0.343737        0.374972        0.281246
+angle_coeff 9 cosine/periodic 88.853997              -1               3
+
+# Positive deformation
+
+variable delta equal ${up}*${len0}
+variable delta equal 0.02*${len0}
+variable delta equal 0.02*17.5254324270417
+variable deltaxy equal ${up}*xy
+variable deltaxy equal 0.02*xy
+variable deltaxz equal ${up}*xz
+variable deltaxz equal 0.02*xz
+variable deltayz equal ${up}*yz
+variable deltayz equal 0.02*yz
+if "${dir} == 1" then    "change_box all x delta 0 ${delta} xy delta ${deltaxy} xz delta ${deltaxz} remap units box"
+if "${dir} == 2" then    "change_box all y delta 0 ${delta} yz delta ${deltayz} remap units box"
+if "${dir} == 3" then    "change_box all z delta 0 ${delta} remap units box"
+if "${dir} == 4" then    "change_box all yz delta ${delta} remap units box"
+if "${dir} == 5" then    "change_box all xz delta ${delta} remap units box"
+change_box all xz delta ${delta} remap units box
+change_box all xz delta 0.350508648540834 remap units box
+Changing box ...
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-8.2051541 0.20472441 -2.005682)
+if "${dir} == 6" then    "change_box all xy delta ${delta} remap units box"
+
+# Relax atoms positions
+
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+minimize 0 ${ftol} ${maxiter} ${maxeval}
+minimize 0 1e-10 ${maxiter} ${maxeval}
+minimize 0 1e-10 100000 ${maxeval}
+minimize 0 1e-10 100000 100000
+Generated 28 of 28 mixed pair_coeff terms from arithmetic mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 7 5 6
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton/tri
+      stencil: half/bin/3d/tri
+      bin: standard
+WARNING: Inconsistent image flags
+For more information see https://docs.lammps.org/err0027 (src/domain.cpp:1052)
+Per MPI rank memory allocation (min/avg/max) = 19.51 | 19.51 | 19.51 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+        64   0             -423.52087      232.77729     -190.74358      8112.4185    
+       114   0             -425.90429      209.07718     -216.8271       7232.0836    
+Loop time of 0.0321362 on 1 procs for 50 steps with 331 atoms
+
+109.1% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = linesearch alpha is zero
+  Energy initial, next-to-last, final = 
+     -190.743582782756  -216.827104832715  -216.827104832715
+  Force two-norm initial, final = 122.38735 18.287097
+  Force max component initial, final = 15.072229 2.5090675
+  Final line search alpha, max atom move = 2.1062458e-11 5.2847128e-11
+  Iterations, force evaluations = 50 155
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.023378   | 0.023378   | 0.023378   |   0.0 | 72.75
+Bond    | 0.005301   | 0.005301   | 0.005301   |   0.0 | 16.50
+Neigh   | 0.002089   | 0.002089   | 0.002089   |   0.0 |  6.50
+Comm    | 0.00079748 | 0.00079748 | 0.00079748 |   0.0 |  2.48
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.000571   |            |       |  1.78
+
+Nlocal:            331 ave         331 max         331 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           2215 ave        2215 max        2215 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          20713 ave       20713 max       20713 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 20713
+Ave neighs/atom = 62.577039
+Ave special neighs/atom = 5.8126888
+Neighbor list builds = 1
+Dangerous builds = 0
+
+# Obtain new stress tensor
+
+variable tmp equal pe
+variable e1 equal ${tmp}
+variable e1 equal -216.827104832715
+variable tmp equal press
+variable p1 equal ${tmp}
+variable p1 equal 7232.0835925149
+variable tmp equal pxx
+variable pxx1 equal ${tmp}
+variable pxx1 equal 7853.2067225187
+variable tmp equal pyy
+variable pyy1 equal ${tmp}
+variable pyy1 equal 10623.0760365016
+variable tmp equal pzz
+variable pzz1 equal ${tmp}
+variable pzz1 equal 3219.96801852443
+variable tmp equal pxy
+variable pxy1 equal ${tmp}
+variable pxy1 equal 384.480776025501
+variable tmp equal pxz
+variable pxz1 equal ${tmp}
+variable pxz1 equal -830.597179299849
+variable tmp equal pyz
+variable pyz1 equal ${tmp}
+variable pyz1 equal 127.507736849148
+
+# Compute elastic constant from pressure tensor
+
+variable C1pos equal ${d1}
+variable C1pos equal 1.16843941326445
+variable C2pos equal ${d2}
+variable C2pos equal 10.8931201422395
+variable C3pos equal ${d3}
+variable C3pos equal 4.23278699181925
+variable C4pos equal ${d4}
+variable C4pos equal -3.11906439003782
+variable C5pos equal ${d5}
+variable C5pos equal -1.19083634125736
+variable C6pos equal ${d6}
+variable C6pos equal -3.18524822026032
+
+# Combine positive and negative
+
+variable C1${dir} equal 0.5*(${C1neg}+${C1pos})
+variable C15 equal 0.5*(${C1neg}+${C1pos})
+variable C15 equal 0.5*(-0.17607299381325+${C1pos})
+variable C15 equal 0.5*(-0.17607299381325+1.16843941326445)
+variable C2${dir} equal 0.5*(${C2neg}+${C2pos})
+variable C25 equal 0.5*(${C2neg}+${C2pos})
+variable C25 equal 0.5*(-8.4849347255845+${C2pos})
+variable C25 equal 0.5*(-8.4849347255845+10.8931201422395)
+variable C3${dir} equal 0.5*(${C3neg}+${C3pos})
+variable C35 equal 0.5*(${C3neg}+${C3pos})
+variable C35 equal 0.5*(2.42738980550365+${C3pos})
+variable C35 equal 0.5*(2.42738980550365+4.23278699181925)
+variable C4${dir} equal 0.5*(${C4neg}+${C4pos})
+variable C45 equal 0.5*(${C4neg}+${C4pos})
+variable C45 equal 0.5*(2.98067284410566+${C4pos})
+variable C45 equal 0.5*(2.98067284410566+-3.11906439003782)
+variable C5${dir} equal 0.5*(${C5neg}+${C5pos})
+variable C55 equal 0.5*(${C5neg}+${C5pos})
+variable C55 equal 0.5*(12.1478977554861+${C5pos})
+variable C55 equal 0.5*(12.1478977554861+-1.19083634125736)
+variable C6${dir} equal 0.5*(${C6neg}+${C6pos})
+variable C65 equal 0.5*(${C6neg}+${C6pos})
+variable C65 equal 0.5*(2.97298448103988+${C6pos})
+variable C65 equal 0.5*(2.97298448103988+-3.18524822026032)
+
+# Delete dir to make sure it is not reused
+
+variable dir delete
+
+# uxy Perturbation
+
+variable dir equal 6
+include ./input/displace_333-RV-32-vasp.mod
+if "${dir} == 1" then    "variable len0 equal ${lx0}"
+if "${dir} == 2" then    "variable len0 equal ${ly0}"
+if "${dir} == 3" then    "variable len0 equal ${lz0}"
+if "${dir} == 4" then    "variable len0 equal ${lz0}"
+if "${dir} == 5" then    "variable len0 equal ${lz0}"
+if "${dir} == 6" then    "variable len0 equal ${ly0}"
+variable len0 equal ${ly0}
+variable len0 equal 13.0882469592108
+
+# Reset box and simulation parameters
+
+clear
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+box tilt large
+
+The 'box' command has been removed and will be ignored
+
+read_restart restart_333-RV-32-vasp.equil
+Reading restart file ...
+  restart file = 10 Sep 2025, LAMMPS = 10 Sep 2025
+  restoring atom style full from restart
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-8.2051541 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  1 by 1 by 1 MPI processor grid
+  restoring pair style lj/cut from restart
+  restoring bond style harmonic from restart
+  restoring angle style hybrid from restart
+  restoring dihedral style harmonic from restart
+  331 atoms
+  336 bonds
+  626 angles
+  732 dihedrals
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        1       
+  special bond factors coul:  0        0        1       
+     4 = max # of 1-2 neighbors
+    10 = max # of 1-3 neighbors
+    14 = max # of special neighbors
+  special bonds CPU = 0.000 seconds
+  read_restart CPU = 0.001 seconds
+include ./input/angles_333-RV-32-vasp.mod
+angle_style hybrid fourier cosine/periodic
+angle_coeff 1 fourier 114.246973        0.343737        0.374972        0.281246
+angle_coeff 2 fourier 157.882480        0.343737        0.374972        0.281246
+angle_coeff 3 fourier 221.735285        0.343737        0.374972        0.281246
+angle_coeff 4 fourier 58.020602        0.343737        0.374972        0.281246
+angle_coeff 5 fourier 32.417871        0.343737        0.374972        0.281246
+angle_coeff 6 fourier 83.380072        0.343737        0.374972        0.281246
+angle_coeff 7 fourier 90.420412        0.343737        0.374972        0.281246
+angle_coeff 8 fourier 75.498766        0.343737        0.374972        0.281246
+angle_coeff 9 cosine/periodic 88.853997              -1               3
+
+# Negative deformation
+
+variable delta equal -${up}*${len0}
+variable delta equal -0.02*${len0}
+variable delta equal -0.02*13.0882469592108
+variable deltaxy equal -${up}*xy
+variable deltaxy equal -0.02*xy
+variable deltaxz equal -${up}*xz
+variable deltaxz equal -0.02*xz
+variable deltayz equal -${up}*yz
+variable deltayz equal -0.02*yz
+if "${dir} == 1" then    "change_box all x delta 0 ${delta} xy delta ${deltaxy} xz delta ${deltaxz} remap units box"
+if "${dir} == 2" then    "change_box all y delta 0 ${delta} yz delta ${deltayz} remap units box"
+if "${dir} == 3" then    "change_box all z delta 0 ${delta} remap units box"
+if "${dir} == 4" then    "change_box all yz delta ${delta} remap units box"
+if "${dir} == 5" then    "change_box all xz delta ${delta} remap units box"
+if "${dir} == 6" then    "change_box all xy delta ${delta} remap units box"
+change_box all xy delta ${delta} remap units box
+change_box all xy delta -0.261764939184216 remap units box
+Changing box ...
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-8.4669191 -0.14578424 -2.005682)
+
+# Relax atoms positions
+
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+minimize 0 ${ftol} ${maxiter} ${maxeval}
+minimize 0 1e-10 ${maxiter} ${maxeval}
+minimize 0 1e-10 100000 ${maxeval}
+minimize 0 1e-10 100000 100000
+Generated 28 of 28 mixed pair_coeff terms from arithmetic mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 7 5 6
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton/tri
+      stencil: half/bin/3d/tri
+      bin: standard
+WARNING: Inconsistent image flags
+For more information see https://docs.lammps.org/err0027 (src/domain.cpp:1052)
+Per MPI rank memory allocation (min/avg/max) = 19.51 | 19.51 | 19.51 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+        64   0             -424.02498      231.20331     -192.82167      8435.7201    
+       124   0             -424.47899      205.53406     -218.94493      7946.393     
+Loop time of 0.036062 on 1 procs for 60 steps with 331 atoms
+
+109.1% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = linesearch alpha is zero
+  Energy initial, next-to-last, final = 
+     -192.821669196595  -218.944928539164  -218.944928539164
+  Force two-norm initial, final = 112.97634 14.125248
+  Force max component initial, final = 14.856279 2.4281573
+  Final line search alpha, max atom move = 6.1658079e-11 1.4971551e-10
+  Iterations, force evaluations = 60 173
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.026368   | 0.026368   | 0.026368   |   0.0 | 73.12
+Bond    | 0.0060059  | 0.0060059  | 0.0060059  |   0.0 | 16.65
+Neigh   | 0.0021055  | 0.0021055  | 0.0021055  |   0.0 |  5.84
+Comm    | 0.0009019  | 0.0009019  | 0.0009019  |   0.0 |  2.50
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.0006805  |            |       |  1.89
+
+Nlocal:            331 ave         331 max         331 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           2227 ave        2227 max        2227 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          20704 ave       20704 max       20704 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 20704
+Ave neighs/atom = 62.549849
+Ave special neighs/atom = 5.8126888
+Neighbor list builds = 1
+Dangerous builds = 0
+
+# Obtain new stress tensor
+
+variable tmp equal pxx
+variable pxx1 equal ${tmp}
+variable pxx1 equal 8342.3694788965
+variable tmp equal pyy
+variable pyy1 equal ${tmp}
+variable pyy1 equal 10986.7927358053
+variable tmp equal pzz
+variable pzz1 equal ${tmp}
+variable pzz1 equal 4510.01671370343
+variable tmp equal pxy
+variable pxy1 equal ${tmp}
+variable pxy1 equal 1824.62431331842
+variable tmp equal pxz
+variable pxz1 equal ${tmp}
+variable pxz1 equal 214.348975107045
+variable tmp equal pyz
+variable pyz1 equal ${tmp}
+variable pyz1 equal 391.941181331567
+
+# Compute elastic constant from pressure tensor
+
+variable C1neg equal ${d1}
+variable C1neg equal 1.27737436862455
+variable C2neg equal ${d2}
+variable C2neg equal -9.074536645721
+variable C3neg equal ${d3}
+variable C3neg equal 2.21745648407575
+variable C4neg equal ${d4}
+variable C4neg equal 4.44123161244991
+variable C5neg equal ${d5}
+variable C5neg equal 6.41556711329183
+variable C6neg equal ${d6}
+variable C6neg equal 10.3859659067249
+
+# Reset box and simulation parameters
+
+clear
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread.
+  using 1 OpenMP thread(s) per MPI task
+box tilt large
+
+The 'box' command has been removed and will be ignored
+
+read_restart restart_333-RV-32-vasp.equil
+Reading restart file ...
+  restart file = 10 Sep 2025, LAMMPS = 10 Sep 2025
+  restoring atom style full from restart
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-8.2051541 -0.14578424 -2.005682)
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  1 by 1 by 1 MPI processor grid
+  restoring pair style lj/cut from restart
+  restoring bond style harmonic from restart
+  restoring angle style hybrid from restart
+  restoring dihedral style harmonic from restart
+  331 atoms
+  336 bonds
+  626 angles
+  732 dihedrals
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        1       
+  special bond factors coul:  0        0        1       
+     4 = max # of 1-2 neighbors
+    10 = max # of 1-3 neighbors
+    14 = max # of special neighbors
+  special bonds CPU = 0.000 seconds
+  read_restart CPU = 0.001 seconds
+include ./input/angles_333-RV-32-vasp.mod
+angle_style hybrid fourier cosine/periodic
+angle_coeff 1 fourier 114.246973        0.343737        0.374972        0.281246
+angle_coeff 2 fourier 157.882480        0.343737        0.374972        0.281246
+angle_coeff 3 fourier 221.735285        0.343737        0.374972        0.281246
+angle_coeff 4 fourier 58.020602        0.343737        0.374972        0.281246
+angle_coeff 5 fourier 32.417871        0.343737        0.374972        0.281246
+angle_coeff 6 fourier 83.380072        0.343737        0.374972        0.281246
+angle_coeff 7 fourier 90.420412        0.343737        0.374972        0.281246
+angle_coeff 8 fourier 75.498766        0.343737        0.374972        0.281246
+angle_coeff 9 cosine/periodic 88.853997              -1               3
+
+# Positive deformation
+
+variable delta equal ${up}*${len0}
+variable delta equal 0.02*${len0}
+variable delta equal 0.02*13.0882469592108
+variable deltaxy equal ${up}*xy
+variable deltaxy equal 0.02*xy
+variable deltaxz equal ${up}*xz
+variable deltaxz equal 0.02*xz
+variable deltayz equal ${up}*yz
+variable deltayz equal 0.02*yz
+if "${dir} == 1" then    "change_box all x delta 0 ${delta} xy delta ${deltaxy} xz delta ${deltaxz} remap units box"
+if "${dir} == 2" then    "change_box all y delta 0 ${delta} yz delta ${deltayz} remap units box"
+if "${dir} == 3" then    "change_box all z delta 0 ${delta} remap units box"
+if "${dir} == 4" then    "change_box all yz delta ${delta} remap units box"
+if "${dir} == 5" then    "change_box all xz delta ${delta} remap units box"
+if "${dir} == 6" then    "change_box all xy delta ${delta} remap units box"
+change_box all xy delta ${delta} remap units box
+change_box all xy delta 0.261764939184216 remap units box
+Changing box ...
+WARNING: Triclinic box skew is large. LAMMPS will run inefficiently. (src/domain.cpp:221)
+  triclinic box = (-0.00055415103 -0.00072747961 -0.00031471352) to (15.709286 13.087519 17.525118) with tilt (-7.9433892 -0.14578424 -2.005682)
+
+# Relax atoms positions
+
+minimize ${etol} ${ftol} ${maxiter} ${maxeval}
+minimize 0 ${ftol} ${maxiter} ${maxeval}
+minimize 0 1e-10 ${maxiter} ${maxeval}
+minimize 0 1e-10 100000 ${maxeval}
+minimize 0 1e-10 100000 100000
+Generated 28 of 28 mixed pair_coeff terms from arithmetic mixing rule
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7
+  ghost atom cutoff = 7
+  binsize = 3.5, bins = 7 5 6
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair lj/cut, perpetual
+      attributes: half, newton on
+      pair build: half/bin/newton/tri
+      stencil: half/bin/3d/tri
+      bin: standard
+WARNING: Inconsistent image flags
+For more information see https://docs.lammps.org/err0027 (src/domain.cpp:1052)
+Per MPI rank memory allocation (min/avg/max) = 19.51 | 19.51 | 19.51 Mbytes
+   Step          Temp          E_pair         E_mol          TotEng         Press     
+        64   0             -423.89282      230.99341     -192.89941      7913.3882    
+        99   0             -425.919        213.55428     -212.36472      7548.4015    
+Loop time of 0.0260611 on 1 procs for 35 steps with 331 atoms
+
+109.1% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = linesearch alpha is zero
+  Energy initial, next-to-last, final = 
+     -192.899413465041  -212.364720389465  -212.364720389465
+  Force two-norm initial, final = 109.70229 23.233291
+  Force max component initial, final = 15.317066 3.0073082
+  Final line search alpha, max atom move = 1.184452e-11 3.5620121e-11
+  Iterations, force evaluations = 35 125
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.018642   | 0.018642   | 0.018642   |   0.0 | 71.53
+Bond    | 0.0043189  | 0.0043189  | 0.0043189  |   0.0 | 16.57
+Neigh   | 0.0020328  | 0.0020328  | 0.0020328  |   0.0 |  7.80
+Comm    | 0.0006174  | 0.0006174  | 0.0006174  |   0.0 |  2.37
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.0004502  |            |       |  1.73
+
+Nlocal:            331 ave         331 max         331 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           2211 ave        2211 max        2211 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          20692 ave       20692 max       20692 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 20692
+Ave neighs/atom = 62.513595
+Ave special neighs/atom = 5.8126888
+Neighbor list builds = 1
+Dangerous builds = 0
+
+# Obtain new stress tensor
+
+variable tmp equal pe
+variable e1 equal ${tmp}
+variable e1 equal -212.364720389465
+variable tmp equal press
+variable p1 equal ${tmp}
+variable p1 equal 7548.40152377786
+variable tmp equal pxx
+variable pxx1 equal ${tmp}
+variable pxx1 equal 8211.83397925516
+variable tmp equal pyy
+variable pyy1 equal ${tmp}
+variable pyy1 equal 11201.6746228977
+variable tmp equal pzz
+variable pzz1 equal ${tmp}
+variable pzz1 equal 3231.69596918077
+variable tmp equal pxy
+variable pxy1 equal ${tmp}
+variable pxy1 equal -1244.31449129705
+variable tmp equal pxz
+variable pxz1 equal ${tmp}
+variable pxz1 equal -885.237630065548
+variable tmp equal pyz
+variable pyz1 equal ${tmp}
+variable pyz1 equal -718.204626520907
+
+# Compute elastic constant from pressure tensor
+
+variable C1pos equal ${d1}
+variable C1pos equal -0.624696870417847
+variable C2pos equal ${d2}
+variable C2pos equal 8.000127210259
+variable C3pos equal ${d3}
+variable C3pos equal 4.17414723853755
+variable C4pos equal ${d4}
+variable C4pos equal 1.10949742681246
+variable C5pos equal ${d5}
+variable C5pos equal -0.91763408742886
+variable C6pos equal ${d6}
+variable C6pos equal 4.95872811635244
+
+# Combine positive and negative
+
+variable C1${dir} equal 0.5*(${C1neg}+${C1pos})
+variable C16 equal 0.5*(${C1neg}+${C1pos})
+variable C16 equal 0.5*(1.27737436862455+${C1pos})
+variable C16 equal 0.5*(1.27737436862455+-0.624696870417847)
+variable C2${dir} equal 0.5*(${C2neg}+${C2pos})
+variable C26 equal 0.5*(${C2neg}+${C2pos})
+variable C26 equal 0.5*(-9.074536645721+${C2pos})
+variable C26 equal 0.5*(-9.074536645721+8.000127210259)
+variable C3${dir} equal 0.5*(${C3neg}+${C3pos})
+variable C36 equal 0.5*(${C3neg}+${C3pos})
+variable C36 equal 0.5*(2.21745648407575+${C3pos})
+variable C36 equal 0.5*(2.21745648407575+4.17414723853755)
+variable C4${dir} equal 0.5*(${C4neg}+${C4pos})
+variable C46 equal 0.5*(${C4neg}+${C4pos})
+variable C46 equal 0.5*(4.44123161244991+${C4pos})
+variable C46 equal 0.5*(4.44123161244991+1.10949742681246)
+variable C5${dir} equal 0.5*(${C5neg}+${C5pos})
+variable C56 equal 0.5*(${C5neg}+${C5pos})
+variable C56 equal 0.5*(6.41556711329183+${C5pos})
+variable C56 equal 0.5*(6.41556711329183+-0.91763408742886)
+variable C6${dir} equal 0.5*(${C6neg}+${C6pos})
+variable C66 equal 0.5*(${C6neg}+${C6pos})
+variable C66 equal 0.5*(10.3859659067249+${C6pos})
+variable C66 equal 0.5*(10.3859659067249+4.95872811635244)
+
+# Delete dir to make sure it is not reused
+
+variable dir delete
+
+# Output final values
+
+variable C11all equal ${C11}
+variable C11all equal 34.5444048619802
+variable C22all equal ${C22}
+variable C22all equal 30.343730178689
+variable C33all equal ${C33}
+variable C33all equal 23.4874512960466
+
+variable C12all equal 0.5*(${C12}+${C21})
+variable C12all equal 0.5*(15.9573915102096+${C21})
+variable C12all equal 0.5*(15.9573915102096+17.2461990686924)
+variable C13all equal 0.5*(${C13}+${C31})
+variable C13all equal 0.5*(15.8363269192771+${C31})
+variable C13all equal 0.5*(15.8363269192771+17.6188792447754)
+variable C23all equal 0.5*(${C23}+${C32})
+variable C23all equal 0.5*(13.3698001576667+${C32})
+variable C23all equal 0.5*(13.3698001576667+13.5573165005944)
+
+variable C44all equal ${C44}
+variable C44all equal 3.47178383863768
+variable C55all equal ${C55}
+variable C55all equal 5.47853070711437
+variable C66all equal ${C66}
+variable C66all equal 7.67234701153867
+
+variable C14all equal 0.5*(${C14}+${C41})
+variable C14all equal 0.5*(0.1799778509331+${C41})
+variable C14all equal 0.5*(0.1799778509331+-0.984691026238353)
+variable C15all equal 0.5*(${C15}+${C51})
+variable C15all equal 0.5*(0.4961832097256+${C51})
+variable C15all equal 0.5*(0.4961832097256+-1.70093769555504)
+variable C16all equal 0.5*(${C16}+${C61})
+variable C16all equal 0.5*(0.326338749103351+${C61})
+variable C16all equal 0.5*(0.326338749103351+-2.42021143015255)
+
+variable C24all equal 0.5*(${C24}+${C42})
+variable C24all equal 0.5*(0.238715521473+${C42})
+variable C24all equal 0.5*(0.238715521473+1.42015609939313)
+variable C25all equal 0.5*(${C25}+${C52})
+variable C25all equal 0.5*(1.2040927083275+${C52})
+variable C25all equal 0.5*(1.2040927083275+0.561127518390795)
+variable C26all equal 0.5*(${C26}+${C62})
+variable C26all equal 0.5*(-0.537204717731+${C62})
+variable C26all equal 0.5*(-0.537204717731+0.08337500807548)
+
+variable C34all equal 0.5*(${C34}+${C43})
+variable C34all equal 0.5*(2.186419786937+${C43})
+variable C34all equal 0.5*(2.186419786937+1.06115601689831)
+variable C35all equal 0.5*(${C35}+${C53})
+variable C35all equal 0.5*(3.33008839866145+${C53})
+variable C35all equal 0.5*(3.33008839866145+3.18268108820028)
+variable C36all equal 0.5*(${C36}+${C63})
+variable C36all equal 0.5*(3.19580186130665+${C63})
+variable C36all equal 0.5*(3.19580186130665+-0.32449684042729)
+
+variable C45all equal 0.5*(${C45}+${C54})
+variable C45all equal 0.5*(-0.0691957729660801+${C54})
+variable C45all equal 0.5*(-0.0691957729660801+-1.51564062622504)
+variable C46all equal 0.5*(${C46}+${C64})
+variable C46all equal 0.5*(2.77536451963118+${C64})
+variable C46all equal 0.5*(2.77536451963118+1.21851488617706)
+variable C56all equal 0.5*(${C56}+${C65})
+variable C56all equal 0.5*(2.74896651293149+${C65})
+variable C56all equal 0.5*(2.74896651293149+-0.10613186961022)
+
+# Average moduli for cubic crystals
+
+variable C11cubic equal (${C11all}+${C22all}+${C33all})/3.0
+variable C11cubic equal (34.5444048619802+${C22all}+${C33all})/3.0
+variable C11cubic equal (34.5444048619802+30.343730178689+${C33all})/3.0
+variable C11cubic equal (34.5444048619802+30.343730178689+23.4874512960466)/3.0
+variable C12cubic equal (${C12all}+${C13all}+${C23all})/3.0
+variable C12cubic equal (16.601795289451+${C13all}+${C23all})/3.0
+variable C12cubic equal (16.601795289451+16.7276030820262+${C23all})/3.0
+variable C12cubic equal (16.601795289451+16.7276030820262+13.4635583291305)/3.0
+variable C44cubic equal (${C44all}+${C55all}+${C66all})/3.0
+variable C44cubic equal (3.47178383863768+${C55all}+${C66all})/3.0
+variable C44cubic equal (3.47178383863768+5.47853070711437+${C66all})/3.0
+variable C44cubic equal (3.47178383863768+5.47853070711437+7.67234701153867)/3.0
+
+variable bulkmodulus equal (${C11cubic}+2*${C12cubic})/3.0
+variable bulkmodulus equal (29.4585287789053+2*${C12cubic})/3.0
+variable bulkmodulus equal (29.4585287789053+2*15.5976522335359)/3.0
+variable shearmodulus1 equal ${C44cubic}
+variable shearmodulus1 equal 5.54088718576357
+variable shearmodulus2 equal (${C11cubic}-${C12cubic})/2.0
+variable shearmodulus2 equal (29.4585287789053-${C12cubic})/2.0
+variable shearmodulus2 equal (29.4585287789053-15.5976522335359)/2.0
+variable poissonratio equal 1.0/(1.0+${C11cubic}/${C12cubic})
+variable poissonratio equal 1.0/(1.0+29.4585287789053/${C12cubic})
+variable poissonratio equal 1.0/(1.0+29.4585287789053/15.5976522335359)
+
+print "Elastic Constant 1 1 = ${C11all}"
+Elastic Constant 1 1 = 34.5444048619802
+print "Elastic Constant 2 2 = ${C22all}"
+Elastic Constant 2 2 = 30.343730178689
+print "Elastic Constant 3 3 = ${C33all}"
+Elastic Constant 3 3 = 23.4874512960466
+
+print "Elastic Constant 1 2 = ${C12all}"
+Elastic Constant 1 2 = 16.601795289451
+print "Elastic Constant 1 3 = ${C13all}"
+Elastic Constant 1 3 = 16.7276030820262
+print "Elastic Constant 2 3 = ${C23all}"
+Elastic Constant 2 3 = 13.4635583291305
+
+print "Elastic Constant 4 4 = ${C44all}"
+Elastic Constant 4 4 = 3.47178383863768
+print "Elastic Constant 5 5 = ${C55all}"
+Elastic Constant 5 5 = 5.47853070711437
+print "Elastic Constant 6 6 = ${C66all}"
+Elastic Constant 6 6 = 7.67234701153867
+
+print "Elastic Constant 1 4 = ${C14all}"
+Elastic Constant 1 4 = -0.402356587652626
+print "Elastic Constant 1 5 = ${C15all}"
+Elastic Constant 1 5 = -0.60237724291472
+print "Elastic Constant 1 6 = ${C16all}"
+Elastic Constant 1 6 = -1.0469363405246
+
+print "Elastic Constant 2 4 = ${C24all}"
+Elastic Constant 2 4 = 0.829435810433065
+print "Elastic Constant 2 5 = ${C25all}"
+Elastic Constant 2 5 = 0.882610113359148
+print "Elastic Constant 2 6 = ${C26all}"
+Elastic Constant 2 6 = -0.22691485482776
+
+print "Elastic Constant 3 4 = ${C34all}"
+Elastic Constant 3 4 = 1.62378790191765
+print "Elastic Constant 3 5 = ${C35all}"
+Elastic Constant 3 5 = 3.25638474343087
+print "Elastic Constant 3 6 = ${C36all}"
+Elastic Constant 3 6 = 1.43565251043968
+
+print "Elastic Constant 4 5 = ${C45all}"
+Elastic Constant 4 5 = -0.79241819959556
+print "Elastic Constant 4 6 = ${C46all}"
+Elastic Constant 4 6 = 1.99693970290412
+print "Elastic Constant 5 6 = ${C56all}"
+Elastic Constant 5 6 = 1.32141732166064
+
+print "Bulk Modulus = ${bulkmodulus} ${cunits}"
+Bulk Modulus = 20.2179444153257 GPa
+print "Shear Modulus 1 = ${shearmodulus1} ${cunits}"
+Shear Modulus 1 = 5.54088718576357 GPa
+print "Shear Modulus 2 = ${shearmodulus2} ${cunits}"
+Shear Modulus 2 = 6.9304382726847 GPa
+print "Poisson Ratio = ${poissonratio}"
+Poisson Ratio = 0.346182296924566
+
+variable rho equal density
+print "density (g/cm^3) = ${rho}"
+density (g/cm^3) = 1.40006200569258
+Total wall time: 0:00:00
