@@ -5,11 +5,11 @@ boundary        p p p
 
 pair_style      lj/cut 5.000
 bond_style      harmonic
-angle_style     hybrid cosine/periodic fourier
+angle_style     hybrid fourier cosine/periodic
 dihedral_style  harmonic
 
-special_bonds   lj/coul 0.0 0.0 1.0
 dielectric      1.0
+special_bonds   lj/coul 0.0 0.0 1.0
 pair_modify     tail yes mix arithmetic
 box tilt        large
 read_data       ./dat/data.333U-50C-20-vasp
@@ -44,14 +44,14 @@ unfix relax
 minimize ${etol} ${ftol} ${maxiter} ${maxeval}
 
 # Generating the full routine as described in the paper for UFF
-# fix nvt_relax   all nvt temp 300 300 ${thermal_damp}
-# run 100000      # 100 picoseconds
-# unfix           nvt_relax
-# 
-# fix npt_relax   all npt temp 300 300 ${thermal_damp} iso 0 0 ${pressure_damp}
-# run 100000      # 100 picoseconds
-# unfix           npt_relax
-# 
+fix nvt_relax   all nvt temp 300 300 ${thermal_damp}
+run 100000      # 100 picoseconds
+unfix           nvt_relax
+ 
+fix npt_relax   all npt temp 300 300 ${thermal_damp} iso 0 0 ${pressure_damp}
+run 100000      # 100 picoseconds
+unfix           npt_relax
+ 
 # fix nvt_heat    all nvt temp 300 1000 ${thermal_damp}
 # run 100000      # 100 picoseconds 
 # unfix           nvt_heat
@@ -69,12 +69,12 @@ minimize ${etol} ${ftol} ${maxiter} ${maxeval}
 # unfix           npt_final
 
 # density computation
-# variable rho equal density   
-# fix integrate  all npt temp ${temp} ${temp} ${thermal_damp} iso 0 0 ${pressure_damp}
-# fix rho50k all ave/time 10 5000 50000 v_rho mode scalar ave one
-# run 50000
-# unfix integrate
-# unfix rho50k
+variable rho equal density   
+fix integrate  all npt temp ${temp} ${temp} ${thermal_damp} iso 0 0 ${pressure_damp}
+fix rho50k all ave/time 10 5000 50000 v_rho mode scalar ave one
+run 50000
+unfix integrate
+unfix rho50k
 
 # Compute initial state
 fix 3 all box/relax  aniso 0.0
