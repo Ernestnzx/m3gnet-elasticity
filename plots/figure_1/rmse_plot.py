@@ -21,7 +21,7 @@ def poly_test(x,y):
     plt.xlabel('Polynomial Degree',fontsize=13)
     plt.ylabel('RMSE / GPa',fontsize=13)
     plt.title('RMSE vs Polynomial Degree of fitted Model',fontsize=14)
-    plt.savefig('./figure_1s.png')
+    plt.savefig('./figure_1.png')
     return (degree,metrics)
 
 x,y = [],[]
